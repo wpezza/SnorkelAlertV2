@@ -651,7 +651,7 @@ Be specific with beach names. Prioritise weekends if conditions are similar. Be 
 class NotificationManager:
     """Handles all notification channels."""
     
-@staticmethod
+    @staticmethod
     def _format_pushover(forecast: dict) -> tuple[str, str]:
         """Format for Pushover (ultra concise + missing-data rules)."""
 
