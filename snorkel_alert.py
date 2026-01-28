@@ -35,6 +35,10 @@ from datetime import datetime, timedelta, date
 from typing import Optional
 from pathlib import Path
 import anthropic
+import time
+import random
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 
 # =============================================================================
@@ -280,13 +284,43 @@ PERTH_BEACHES = [
 
 class MarineDataFetcher:
     """Fetches marine and weather data from multiple sources."""
-    
+
+    # Reuse one session across the whole run (faster + more reliable)
+    _session = None
+
+    @classmethod
+    def _get_session(cls) -> requests.Session:
+        if cls._session is not None:
+            return cls._session
+
+        s = requests.Session()
+
+        # Retry strategy: handles 429/5xx + transient network issues
+        retry = Retry(
+            total=5,                # up to 5 attempts
+            connect=5,
+            read=5,
+            backoff_factor=1.2,     # exponential backoff: 1.2s, 2.4s, 4.8s...
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=frozenset(["GET"]),
+            raise_on_status=False,  # we'll call raise_for_status ourselves
+        )
+
+        adapter = HTTPAdapter(max_retries=retry, pool_connections=20, pool_maxsize=20)
+        s.mount("https://", adapter)
+        s.mount("http://", adapter)
+
+        cls._session = s
+        return cls._session
+
     @staticmethod
     def fetch_open_meteo(lat: float, lon: float, days: int = 7) -> dict:
-        """Fetch marine + weather data from Open-Meteo."""
+        """Fetch marine + weather data from Open-Meteo with retries + session reuse."""
+        session = MarineDataFetcher._get_session()
+
         marine_url = "https://marine-api.open-meteo.com/v1/marine"
         weather_url = "https://api.open-meteo.com/v1/forecast"
-        
+
         marine_params = {
             "latitude": lat,
             "longitude": lon,
@@ -302,7 +336,7 @@ class MarineDataFetcher:
             "timezone": "Australia/Perth",
             "forecast_days": days
         }
-        
+
         weather_params = {
             "latitude": lat,
             "longitude": lon,
@@ -324,13 +358,22 @@ class MarineDataFetcher:
             "timezone": "Australia/Perth",
             "forecast_days": days
         }
-        
-        marine_resp = requests.get(marine_url, params=marine_params, timeout=30)
+
+        # Fix #2: small jitter delay to avoid burst throttling
+        time.sleep(random.uniform(0.2, 0.8))
+
+        # Slightly higher read timeout helps a lot on GitHub runners
+        timeout = (10, 75)  # (connect_timeout, read_timeout)
+
+        marine_resp = session.get(marine_url, params=marine_params, timeout=timeout)
         marine_resp.raise_for_status()
-        
-        weather_resp = requests.get(weather_url, params=weather_params, timeout=30)
+
+        # Another tiny jitter between endpoints
+        time.sleep(random.uniform(0.1, 0.4))
+
+        weather_resp = session.get(weather_url, params=weather_params, timeout=timeout)
         weather_resp.raise_for_status()
-        
+
         return {
             "marine": marine_resp.json(),
             "weather": weather_resp.json()
