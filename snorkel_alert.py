@@ -647,107 +647,40 @@ Be specific with beach names. Prioritise weekends if conditions are similar. Be 
 # =============================================================================
 # 📱 NOTIFICATION SYSTEM
 # =============================================================================
-
 class NotificationManager:
     """Handles all notification channels."""
     
     @staticmethod
-    def _format_pushover(forecast: dict) -> tuple[str, str]:
-        """Format for Pushover (ultra concise + missing-data rules)."""
-
-        def short_day_label(day_obj: dict) -> str:
+    def send_pushover(title: str, message: str, priority: int = 0) -> bool:
+        """Send Pushover notification."""
+        if not Config.ENABLE_PUSHOVER:
+            return False
+        if not Config.PUSHOVER_USER_KEYS or not Config.PUSHOVER_API_TOKEN:
+            print("   ⚠️ Pushover not configured")
+            return False
+        
+        user_keys = [k.strip() for k in Config.PUSHOVER_USER_KEYS.split(",") if k.strip()]
+        success = True
+        
+        for user_key in user_keys:
             try:
-                dt = datetime.strptime(day_obj.get("date", ""), "%Y-%m-%d")
-                return dt.strftime("%a %d").replace(" 0", " ")
-            except Exception:
-                name = day_obj.get("day_name", "Day")
-                return name[:3]
-
-        def find_day_by_name(day_name: str) -> Optional[dict]:
-            for d in forecast.get("days", []):
-                if (d.get("day_name") or "").lower() == (day_name or "").lower():
-                    return d
-            return None
-
-        def build_missing_line(missing: list[str]) -> Optional[str]:
-            if not missing:
-                return None
-            if len(missing) <= 2:
-                return f"Missing: {', '.join(missing)}"
-            return f"Missing: {len(missing)} beaches"
-
-        def pick_avoid_day(days: list[dict]) -> Optional[dict]:
-            if not days:
-                return None
-            for d in days:
-                if d.get("snorkel_rating") == "Poor" or d.get("beach_rating") == "Poor":
-                    return d
-
-            def combined_score(d: dict) -> int:
-                s = int(d.get("snorkel_score") or 0)
-                b = int(d.get("beach_score") or 0)
-                return (s + b) // 2
-
-            return min(days, key=combined_score)
-
-        def extract_outlook(alerts: list[str]) -> Optional[str]:
-            if not alerts:
-                return None
-            keywords = ("storm", "thunder", "heatwave", "extreme", "gale", "cyclone", "heavy rain")
-            for a in alerts:
-                al = a.lower()
-                if any(k in al for k in keywords):
-                    a_short = a.strip()
-                    if len(a_short) > 70:
-                        a_short = a_short[:67].rstrip() + "…"
-                    return f"Outlook: {a_short}"
-            return None
-
-        meta = forecast.get("_meta", {}) or {}
-        missing_beaches = meta.get("missing_beaches", []) or []
-        water_temp_c = meta.get("water_temp_c", None)
-
-        week = forecast.get("week_top_picks", {}) or {}
-        best_snorkel = week.get("best_snorkel", {}) or {}
-        best_beach = week.get("best_beach", {}) or {}
-
-        days = forecast.get("days", []) or []
-        alerts = forecast.get("alerts", []) or []
-
-        title = "🤿 Snorkel Forecast"
-        lines: list[str] = []
-
-        if best_snorkel.get("spot") and best_snorkel.get("day"):
-            d = find_day_by_name(best_snorkel.get("day"))
-            day_lbl = short_day_label(d) if d else best_snorkel["day"][:3]
-            lines.append(f"Best snorkel: {day_lbl} – {best_snorkel['spot']} 🤿")
-
-        if best_beach.get("spot") and best_beach.get("day"):
-            d = find_day_by_name(best_beach.get("day"))
-            day_lbl = short_day_label(d) if d else best_beach["day"][:3]
-            lines.append(f"Best beach: {day_lbl} – {best_beach['spot']} ☀️")
-
-        avoid_day = pick_avoid_day(days)
-        if avoid_day:
-            day_lbl = short_day_label(avoid_day)
-            lines.append(f"Avoid: {day_lbl} – strong winds 💨")
-
-        outlook_line = extract_outlook(alerts)
-        if outlook_line:
-            lines.append(outlook_line)
-
-        if isinstance(water_temp_c, (int, float)):
-            lines.append(f"Water: {round(float(water_temp_c), 1)}°C 🌡️")
-        else:
-            wt = forecast.get("water_temp_feel")
-            if wt:
-                lines.append(f"Water: {wt} 🌡️")
-
-        missing_line = build_missing_line(missing_beaches)
-        if missing_line:
-            lines.append(missing_line)
-
-        return title, "\n".join(lines)
+                data = {
+                    "token": Config.PUSHOVER_API_TOKEN,
+                    "user": user_key,
+                    "title": title,
+                    "message": message,
+                    "priority": priority,
+                    "sound": "cosmic",
+                    "html": 1
+                }
+                resp = requests.post("https://api.pushover.net/1/messages.json", data=data, timeout=30)
+                resp.raise_for_status()
+                print(f"   ✅ Pushover sent to {user_key[:8]}...")
+            except Exception as e:
+                print(f"   ❌ Pushover failed for {user_key[:8]}: {e}")
+                success = False
+        
+        return success
     
     @staticmethod
     def send_telegram(message: str) -> bool:
@@ -831,44 +764,114 @@ class NotificationManager:
             results["email"] = cls.send_email(email_subj, email_html, email_text)
         
         return results
-    
+
     @staticmethod
     def _format_pushover(forecast: dict) -> tuple[str, str]:
-        """Format for Pushover (concise)."""
-        week = forecast.get("week_top_picks", {})
-        best_snorkel = week.get("best_snorkel", {})
-        best_beach = week.get("best_beach", {})
-        
-        # Emoji for headline
-        days = forecast.get("days", [])
-        has_perfect = any(d.get("snorkel_rating") == "Perfect" or d.get("beach_rating") == "Perfect" for d in days)
-        emoji = "🤿🏖️" if has_perfect else "🌊"
-        
-        title = f"{emoji} {forecast.get('headline', 'Perth Beach Forecast')}"
-        
-        lines = [forecast.get("week_summary", ""), ""]
-        
-        # Day summary
-        for day in days[:4]:  # First 4 days
-            snorkel_icon = {"Perfect": "🤿✨", "Good": "🤿", "OK": "😐", "Poor": "❌"}.get(day.get("snorkel_rating"), "")
-            beach_icon = {"Perfect": "☀️✨", "Good": "☀️", "OK": "⛅", "Poor": "💨"}.get(day.get("beach_rating"), "")
-            lines.append(f"<b>{day['day_name'][:3]}</b>: {snorkel_icon} {beach_icon} {day.get('one_liner', '')}")
-        
-        if len(days) > 4:
-            lines.append("...")
-        
-        # Top picks
-        lines.append("")
-        if best_snorkel.get("spot"):
-            lines.append(f"🤿 <b>Best snorkel:</b> {best_snorkel['spot']} ({best_snorkel['day']})")
-        if best_beach.get("spot"):
-            lines.append(f"☀️ <b>Best beach:</b> {best_beach['spot']} ({best_beach['day']})")
-        
+        """Format for Pushover (ultra concise + missing-data rules)."""
+
+        def short_day_label(day_obj: dict) -> str:
+            # Example: "Thu 29"
+            try:
+                dt = datetime.strptime(day_obj.get("date", ""), "%Y-%m-%d")
+                return dt.strftime("%a %d").replace(" 0", " ")
+            except Exception:
+                name = day_obj.get("day_name", "Day")
+                return name[:3]
+
+        def find_day_by_name(day_name: str) -> Optional[dict]:
+            for d in forecast.get("days", []):
+                if (d.get("day_name") or "").lower() == (day_name or "").lower():
+                    return d
+            return None
+
+        def build_missing_line(missing: list[str]) -> Optional[str]:
+            if not missing:
+                return None
+            if len(missing) <= 2:
+                return f"Missing: {', '.join(missing)}"
+            return f"Missing: {len(missing)} beaches"
+
+        def pick_avoid_day(days: list[dict]) -> Optional[dict]:
+            if not days:
+                return None
+            # Prefer explicit "Poor" days
+            for d in days:
+                if d.get("snorkel_rating") == "Poor" or d.get("beach_rating") == "Poor":
+                    return d
+
+            # Otherwise pick lowest combined score
+            def combined_score(d: dict) -> int:
+                s = int(d.get("snorkel_score") or 0)
+                b = int(d.get("beach_score") or 0)
+                return (s + b) // 2
+
+            return min(days, key=combined_score)
+
+        def extract_outlook(alerts: list[str]) -> Optional[str]:
+            if not alerts:
+                return None
+            keywords = ("storm", "thunder", "heatwave", "extreme", "gale", "cyclone", "heavy rain")
+            for a in alerts:
+                al = a.lower()
+                if any(k in al for k in keywords):
+                    a_short = a.strip()
+                    if len(a_short) > 70:
+                        a_short = a_short[:67].rstrip() + "…"
+                    return f"Outlook: {a_short}"
+            return None
+
+        meta = forecast.get("_meta", {}) or {}
+        missing_beaches = meta.get("missing_beaches", []) or []
+        water_temp_c = meta.get("water_temp_c", None)
+
+        week = forecast.get("week_top_picks", {}) or {}
+        best_snorkel = week.get("best_snorkel", {}) or {}
+        best_beach = week.get("best_beach", {}) or {}
+
+        days = forecast.get("days", []) or []
+        alerts = forecast.get("alerts", []) or []
+
+        title = "🤿 Snorkel Forecast"
+        lines: list[str] = []
+
+        # Best snorkel
+        if best_snorkel.get("spot") and best_snorkel.get("day"):
+            d = find_day_by_name(best_snorkel.get("day"))
+            day_lbl = short_day_label(d) if d else best_snorkel["day"][:3]
+            lines.append(f"Best snorkel: {day_lbl} – {best_snorkel['spot']} 🤿")
+
+        # Best beach
+        if best_beach.get("spot") and best_beach.get("day"):
+            d = find_day_by_name(best_beach.get("day"))
+            day_lbl = short_day_label(d) if d else best_beach["day"][:3]
+            lines.append(f"Best beach: {day_lbl} – {best_beach['spot']} ☀️")
+
+        # Avoid
+        avoid_day = pick_avoid_day(days)
+        if avoid_day:
+            day_lbl = short_day_label(avoid_day)
+            lines.append(f"Avoid: {day_lbl} – strong winds 💨")
+
+        # Outlook (only if notable)
+        outlook_line = extract_outlook(alerts)
+        if outlook_line:
+            lines.append(outlook_line)
+
         # Water temp
-        lines.append(f"\n🌡️ Water: {forecast.get('water_temp_feel', 'N/A')}")
-        
+        if isinstance(water_temp_c, (int, float)):
+            lines.append(f"Water: {round(float(water_temp_c), 1)}°C 🌡️")
+        else:
+            wt = forecast.get("water_temp_feel")
+            if wt:
+                lines.append(f"Water: {wt} 🌡️")
+
+        # Missing line (rules)
+        missing_line = build_missing_line(missing_beaches)
+        if missing_line:
+            lines.append(missing_line)
+
         return title, "\n".join(lines)
-    
+
     @staticmethod
     def _format_telegram(forecast: dict) -> str:
         """Format for Telegram (can be longer)."""
@@ -1075,7 +1078,6 @@ class NotificationManager:
         text = "\n".join(text_lines)
         
         return subject, html, text
-
 
 # =============================================================================
 # 📊 DASHBOARD GENERATOR
