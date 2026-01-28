@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-01-28T14:04:30.502000",
+  "generated_at": "2026-01-28T14:25:11.226432",
   "forecast": {
-    "headline": "Friday-Monday Golden Run, Tuesday Total Washout",
-    "week_summary": "A classic Perth summer week with perfect conditions Friday through Monday - glassy mornings at Mettams and Watermans, dreamy afternoons at Cottesloe. Tuesday brings the week's only stinker with big winds and waves making most spots unswimmable.",
-    "water_temp_feel": "Perfect - boardies and bikinis all day",
+    "headline": "Perfect Mid-Week, Wild Tuesday Wind Warning",
+    "week_summary": "Stunning conditions Thursday-Monday with glassy mornings at Mettams and South Beach. Friday stands out as the pick of the week with light winds and perfect temps. Tuesday turns nasty with 30+ knot winds - stay inland or hit the cafes at Bathers Beach instead.",
+    "water_temp_feel": "Perfect - boardies and rashie ideal",
     "days": [
       {
         "date": "2026-01-28",
         "day_name": "Wednesday",
         "is_weekend": false,
         "sunrise": "05:37",
-        "snorkel_rating": "Poor",
-        "snorkel_score": 35,
+        "snorkel_rating": "OK",
+        "snorkel_score": 45,
         "beach_rating": "Good",
         "beach_score": 60,
         "best_snorkel_spot": "Leighton Beach",
-        "best_snorkel_time": "6am-8am",
-        "best_beach_spot": "Leighton Beach",
-        "uv_warning": "Extreme - cover up by 10am",
+        "best_snorkel_time": "6am-9am",
+        "best_beach_spot": "Bathers Beach",
+        "uv_warning": "High - cover up by 11am",
         "crowd_prediction": "Quiet",
-        "one_liner": "Breezy start but manageable - stick to protected spots like Leighton",
-        "pro_tip": "Hit the beaches early before the 25km/h gusts kick in around 9am"
+        "one_liner": "Cool start but decent by midday, avoid windswept northern beaches",
+        "pro_tip": "Hit Fremantle beaches - they're more protected from the morning chill"
       },
       {
         "date": "2026-01-29",
@@ -28,16 +28,16 @@
         "is_weekend": false,
         "sunrise": "05:38",
         "snorkel_rating": "Perfect",
-        "snorkel_score": 80,
+        "snorkel_score": 70,
         "beach_rating": "Perfect",
-        "beach_score": 80,
+        "beach_score": 75,
         "best_snorkel_spot": "South Beach",
-        "best_snorkel_time": "7am-10am",
+        "best_snorkel_time": "6am-10am",
         "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
-        "crowd_prediction": "Moderate",
-        "one_liner": "Beautiful conditions brewing - South Beach snorkelling is sublime",
-        "pro_tip": "Low tide at 12:49pm perfect for exploring North Cottesloe's Peters Pool"
+        "crowd_prediction": "Quiet",
+        "one_liner": "Glassy morning magic at South Beach before sea breeze kicks in",
+        "pro_tip": "South Beach at dawn for pristine snorkelling - it's firing at 80 score"
       },
       {
         "date": "2026-01-30",
@@ -45,16 +45,16 @@
         "is_weekend": false,
         "sunrise": "05:39",
         "snorkel_rating": "Good",
-        "snorkel_score": 60,
+        "snorkel_score": 55,
         "beach_rating": "Perfect",
-        "beach_score": 90,
+        "beach_score": 85,
         "best_snorkel_spot": "Watermans Bay",
-        "best_snorkel_time": "6am-11am",
+        "best_snorkel_time": "7am-11am",
         "best_beach_spot": "Cottesloe Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Moderate",
-        "one_liner": "Absolute pearler - light winds make every beach a winner",
-        "pro_tip": "Perfect Cottesloe sunset session - arrive by 4pm to claim your spot"
+        "one_liner": "Pick of the week - light winds, warm temps, Cottesloe scoring 90",
+        "pro_tip": "Extended morning window today - sea breeze delayed til afternoon"
       },
       {
         "date": "2026-01-31",
@@ -62,16 +62,16 @@
         "is_weekend": true,
         "sunrise": "05:40",
         "snorkel_rating": "OK",
-        "snorkel_score": 55,
+        "snorkel_score": 35,
         "beach_rating": "Perfect",
-        "beach_score": 80,
+        "beach_score": 75,
         "best_snorkel_spot": "Leighton Beach",
         "best_snorkel_time": "6am-8am",
-        "best_beach_spot": "Leighton Beach",
+        "best_beach_spot": "City Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Busy",
-        "one_liner": "Weekend warrior conditions - get to Leighton early before crowds",
-        "pro_tip": "Avoid Cottesloe after 10am - it'll be absolutely heaving with weekend crowds"
+        "one_liner": "Weekend crowds arrive but beaches still firing, early snorkel window only",
+        "pro_tip": "City Beach groynes provide shelter from afternoon winds"
       },
       {
         "date": "2026-02-01",
@@ -79,16 +79,16 @@
         "is_weekend": true,
         "sunrise": "05:41",
         "snorkel_rating": "OK",
-        "snorkel_score": 55,
-        "beach_rating": "Perfect",
-        "beach_score": 80,
+        "snorkel_score": 35,
+        "beach_rating": "Good",
+        "beach_score": 70,
         "best_snorkel_spot": "South Beach",
         "best_snorkel_time": "6am-8am",
         "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Packed",
-        "one_liner": "Strong winds but sheltered spots still deliver - Leighton's your best bet",
-        "pro_tip": "Skip the chaos at Cottesloe and head to quieter Watermans Bay instead"
+        "one_liner": "Strong winds building, grab early session before 21+ knot sea breeze",
+        "pro_tip": "Leighton handles wind better - perfect for kitesurfers afternoon"
       },
       {
         "date": "2026-02-02",
@@ -96,16 +96,16 @@
         "is_weekend": false,
         "sunrise": "05:42",
         "snorkel_rating": "Good",
-        "snorkel_score": 75,
+        "snorkel_score": 70,
         "beach_rating": "Perfect",
-        "beach_score": 90,
-        "best_snorkel_spot": "South Beach",
-        "best_snorkel_time": "6am-10am",
+        "beach_score": 88,
+        "best_snorkel_spot": "Watermans Bay",
+        "best_snorkel_time": "7am-10am",
         "best_beach_spot": "Cottesloe Beach",
-        "uv_warning": "Extreme - cover up by 10am",
+        "uv_warning": "Extreme - cover up by 9am",
         "crowd_prediction": "Quiet",
-        "one_liner": "Stunning Monday - 29\u00b0C and crystal clear water at every beach",
-        "pro_tip": "Best snorkelling day of the week - Mettams Pool visibility will be incredible"
+        "one_liner": "Stunning Monday recovery - warmest day of week, Watermans Bay glassy",
+        "pro_tip": "29\u00b0C day - perfect for extended snorkel sessions at protected reefs"
       },
       {
         "date": "2026-02-03",
@@ -115,120 +115,44 @@
         "snorkel_rating": "Poor",
         "snorkel_score": 0,
         "beach_rating": "Poor",
-        "beach_score": 30,
-        "best_snorkel_spot": "None recommended",
-        "best_snorkel_time": "Avoid",
-        "best_beach_spot": "Hillarys Beach",
+        "beach_score": 35,
+        "best_snorkel_spot": "None - avoid water",
+        "best_snorkel_time": "Don't bother",
+        "best_beach_spot": "Bathers Beach",
         "uv_warning": null,
         "crowd_prediction": "Quiet",
-        "one_liner": "Howling southerly ruins the party - stay inland or hit the pools",
-        "pro_tip": "If you must go to the beach, Hillarys harbour offers the most protection"
+        "one_liner": "Howling 30+ knot winds, stay inland or hit Fremantle cafes",
+        "pro_tip": "Perfect day to explore Fremantle's coffee scene - wild on the water"
       }
     ],
     "week_top_picks": {
       "best_snorkel": {
-        "day": "Monday",
+        "day": "Thursday",
         "spot": "South Beach",
-        "time": "7am-9am",
-        "why": "Perfect snorkel score of 75 with 29\u00b0C air temp and minimal wind"
+        "time": "Dawn-9am",
+        "why": "Perfect 80 snorkel score with glassy conditions"
       },
       "best_beach": {
         "day": "Friday",
         "spot": "Cottesloe Beach",
-        "time": "All day",
-        "why": "Perfect score of 90 with light winds and ideal 23\u00b0C temperature"
+        "time": "8am-2pm",
+        "why": "90 beach score, light winds, extended calm window"
       },
       "hidden_gem": {
-        "day": "Thursday",
+        "day": "Monday",
         "spot": "Watermans Bay",
-        "why": "Quieter than Cottesloe but equally stunning conditions for snorkelling"
+        "why": "Warmest day at 29\u00b0C, crowd-free Monday with 75 snorkel score"
       }
     },
     "alerts": [
-      "Tuesday 3rd February - severe wind warning 30km/h+ with gusts to 44km/h, avoid all water activities",
-      "Weekend crowds will be intense at popular spots - arrive before 8am or after 5pm"
+      "Tuesday: Dangerous 30+ knot winds - avoid all water activities",
+      "Weekend crowds: Arrive before 8am at popular beaches",
+      "Extended UV: Sun protection essential from 9am onwards"
     ],
-    "fun_fact": "Perth's famous 'Fremantle Doctor' sea breeze typically arrives between 11am-2pm in summer, dropping temperatures by 5-8\u00b0C and creating that classic afternoon chop - perfect timing for post-swim fish and chips!",
+    "fun_fact": "Perth's sea breeze (Fremantle Doctor) is so reliable, locals set their watches by it - typically arriving between 11am-2pm in summer, bringing that refreshing afternoon relief!",
     "_meta": {
       "missing_beaches": [],
       "water_temp_c": 23.2
     }
-  },
-  "beaches": [
-    {
-      "name": "Bathers Beach",
-      "area": "Fremantle",
-      "type": "beach"
-    },
-    {
-      "name": "South Beach",
-      "area": "Fremantle",
-      "type": "beach"
-    },
-    {
-      "name": "Leighton Beach",
-      "area": "North Fremantle",
-      "type": "beach"
-    },
-    {
-      "name": "Cottesloe Beach",
-      "area": "Cottesloe",
-      "type": "both"
-    },
-    {
-      "name": "North Cottesloe",
-      "area": "Cottesloe",
-      "type": "snorkel"
-    },
-    {
-      "name": "Swanbourne Beach",
-      "area": "Swanbourne",
-      "type": "beach"
-    },
-    {
-      "name": "City Beach",
-      "area": "City Beach",
-      "type": "beach"
-    },
-    {
-      "name": "Floreat Beach",
-      "area": "Floreat",
-      "type": "beach"
-    },
-    {
-      "name": "Scarborough Beach",
-      "area": "Scarborough",
-      "type": "beach"
-    },
-    {
-      "name": "Trigg Beach",
-      "area": "Trigg",
-      "type": "beach"
-    },
-    {
-      "name": "Mettams Pool",
-      "area": "Trigg",
-      "type": "snorkel"
-    },
-    {
-      "name": "Watermans Bay",
-      "area": "Watermans",
-      "type": "snorkel"
-    },
-    {
-      "name": "Sorrento Beach",
-      "area": "Sorrento",
-      "type": "beach"
-    },
-    {
-      "name": "Hillarys Beach",
-      "area": "Hillarys",
-      "type": "beach"
-    },
-    {
-      "name": "Boyinaboat Reef",
-      "area": "Hillarys",
-      "type": "snorkel"
-    }
-  ]
+  }
 }
