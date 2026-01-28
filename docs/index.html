@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌊 Snorkel Alert v2 | Perth Beach Forecast</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ocean-deep: #0a1628;
+            --ocean-mid: #1a3a5c;
+            --seafoam: #4ecdc4;
+            --sun: #ffe66d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(180deg, var(--ocean-deep), var(--ocean-mid));
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .container { max-width: 600px; }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--seafoam), var(--sun));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: var(--seafoam);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .btn {
+            display: inline-block;
+            background: var(--seafoam);
+            color: var(--ocean-deep);
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🌊 Snorkel Alert v2</div>
+        <p class="tagline">Perth's Smartest Beach Forecast</p>
+        
+        <div class="status">
+            <div class="spinner"></div>
+            <h2>Generating First Forecast...</h2>
+            <p style="margin-top: 15px; opacity: 0.7;">
+                Run the workflow in GitHub Actions to generate your first forecast.
+                This page will automatically update with beautiful beach conditions!
+            </p>
+        </div>
+        
+        <a href="settings.html" class="btn">⚙️ Setup Guide</a>
+        <a href="https://github.com/wpezza/snorkel-alert-v2" class="btn secondary">📖 Documentation</a>
+    </div>
+</body>
+</html>
