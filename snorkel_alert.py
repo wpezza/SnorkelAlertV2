@@ -4,7 +4,6 @@
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 The ultimate Perth beach & snorkelling forecast system.
-Built to make Elon proud.
 
 Features:
 - 15 beaches from Fremantle to Hillarys
@@ -812,14 +811,22 @@ class NotificationManager:
     def _format_pushover(forecast: dict) -> tuple[str, str]:
         """Format for Pushover (ultra concise + missing-data rules)."""
 
-        def short_day_label(day_obj: dict) -> str:
-            # Example: "Thu 29"
-            try:
-                dt = datetime.strptime(day_obj.get("date", ""), "%Y-%m-%d")
-                return dt.strftime("%a %d").replace(" 0", " ")
-            except Exception:
-                name = day_obj.get("day_name", "Day")
-                return name[:3]
+def short_day_label(day_obj: dict) -> str:
+    try:
+        dt = datetime.strptime(day_obj.get("date", ""), "%Y-%m-%d")
+        day_num = dt.day
+
+        # Ordinal suffix logic
+        if 11 <= day_num <= 13:
+            suffix = "th"
+        else:
+            suffix = {1: "st", 2: "nd", 3: "rd"}.get(day_num % 10, "th")
+
+        return f"{dt.strftime('%a')} {day_num}{suffix}"
+
+    except Exception:
+        name = day_obj.get("day_name", "Day")
+        return name[:3]
 
         def find_day_by_name(day_name: str) -> Optional[dict]:
             for d in forecast.get("days", []):
@@ -893,7 +900,7 @@ class NotificationManager:
         avoid_day = pick_avoid_day(days)
         if avoid_day:
             day_lbl = short_day_label(avoid_day)
-            lines.append(f"Avoid: {day_lbl} – strong winds 💨")
+            lines.append(f"Avoid: {day_lbl} – Strong Winds 💨")
 
         # Outlook (only if notable)
         outlook_line = extract_outlook(alerts)
@@ -1029,8 +1036,8 @@ class NotificationManager:
                 <span class="rating {beach_class}">☀️ {day.get('beach_rating', 'N/A')}</span>
             </div>
             <div style="font-size: 14px; color: #666;">
-                Best snorkel: <b>{day.get('best_snorkel_spot', 'N/A')}</b> ({day.get('best_snorkel_time', 'N/A')})<br>
-                Best beach: <b>{day.get('best_beach_spot', 'N/A')}</b>
+                Best Snorkel: <b>{day.get('best_snorkel_spot', 'N/A')}</b> ({day.get('best_snorkel_time', 'N/A')})<br>
+                Best Beach: <b>{day.get('best_beach_spot', 'N/A')}</b>
             </div>
             <div class="tip">💡 {day.get('one_liner', '')}</div>
             {"<div class='alert'>⚠️ " + day['uv_warning'] + "</div>" if day.get('uv_warning') else ""}
