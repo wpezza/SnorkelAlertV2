@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-01-28T12:47:39.263209",
+  "generated_at": "2026-01-28T13:57:05.251678",
   "forecast": {
-    "headline": "Perfect Friday, Wild Tuesday - Mixed Week Ahead",
-    "week_summary": "Friday delivers perfect conditions with calm winds and 25\u00b0C temperatures - ideal for both Cottesloe sunbaking and North Cottesloe snorkelling. Early mornings Wednesday-Monday offer glassy snorkel sessions, but Tuesday's 43km/h gusts make it a write-off. Weekend warriors should hit Leighton Beach Saturday for decent conditions despite the wind.",
-    "water_temp_feel": "Perfect - boardies all day, refreshing dips",
+    "headline": "Friday-Monday golden run after midweek wobbles",
+    "week_summary": "Midweek starts rough with gusty winds, but Friday through Monday delivers perfect beach weather. Cottesloe and North Cottesloe shine on Friday with glassy conditions, while Monday hits 29\u00b0C - the week's warmest day. Tuesday crashes the party with 40+ knot winds.",
+    "water_temp_feel": "Perfect - boardies all day, no wetsuit needed",
     "days": [
       {
         "date": "2026-01-28",
         "day_name": "Wednesday",
         "is_weekend": false,
         "sunrise": "05:37",
-        "snorkel_rating": "OK",
-        "snorkel_score": 55,
+        "snorkel_rating": "Poor",
+        "snorkel_score": 35,
         "beach_rating": "Good",
-        "beach_score": 70,
+        "beach_score": 60,
         "best_snorkel_spot": "Leighton Beach",
         "best_snorkel_time": "6am-8am",
-        "best_beach_spot": "City Beach",
+        "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Quiet",
-        "one_liner": "Early bird gets the glassy conditions at Leighton, windy by lunch",
-        "pro_tip": "Hit the sheltered northern groynes at City Beach when the wind picks up"
+        "one_liner": "Early birds win - 25km/h gusts arrive by 9am",
+        "pro_tip": "Hit sheltered Fremantle beaches before the Doctor kicks in"
       },
       {
         "date": "2026-01-29",
@@ -36,8 +36,8 @@
         "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Quiet",
-        "one_liner": "South Beach snorkelling at its finest - perfect visibility and calm seas",
-        "pro_tip": "Low tide at 12:49pm means crystal clear snorkelling conditions all morning"
+        "one_liner": "South Beach delivers perfect snorkelling with 0.7m waves",
+        "pro_tip": "High tide at 6:49am - perfect timing for morning snorkel session"
       },
       {
         "date": "2026-01-30",
@@ -48,13 +48,13 @@
         "snorkel_score": 60,
         "beach_rating": "Perfect",
         "beach_score": 90,
-        "best_snorkel_spot": "North Cottesloe",
-        "best_snorkel_time": "8am-11am",
+        "best_snorkel_spot": "Watermans Bay",
+        "best_snorkel_time": "6am-11am",
         "best_beach_spot": "Cottesloe Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Moderate",
-        "one_liner": "Dream beach day - light winds and 25\u00b0C, Cottesloe will be buzzing",
-        "pro_tip": "Grab breakfast at Cottesloe Surf Club after your morning swim - perfect combo"
+        "one_liner": "Glassy gold - light winds make Cottesloe pristine",
+        "pro_tip": "Best day of the week for iconic Cottesloe sunset drinks"
       },
       {
         "date": "2026-01-31",
@@ -62,16 +62,16 @@
         "is_weekend": true,
         "sunrise": "05:40",
         "snorkel_rating": "OK",
-        "snorkel_score": 55,
+        "snorkel_score": 35,
         "beach_rating": "Perfect",
         "beach_score": 80,
-        "best_snorkel_spot": "Leighton Beach",
+        "best_snorkel_spot": "North Cottesloe",
         "best_snorkel_time": "6am-8am",
-        "best_beach_spot": "City Beach",
+        "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Busy",
-        "one_liner": "Weekend warriors should hit sheltered spots - City Beach groynes your friend",
-        "pro_tip": "Avoid Cottesloe crowds - City Beach playground keeps families happy with same great swimming"
+        "one_liner": "Weekend crowds hit, but early risers score at Peters Pool",
+        "pro_tip": "Skip packed Cottesloe main beach - head to quieter North Cott"
       },
       {
         "date": "2026-02-01",
@@ -79,7 +79,7 @@
         "is_weekend": true,
         "sunrise": "05:41",
         "snorkel_rating": "OK",
-        "snorkel_score": 55,
+        "snorkel_score": 40,
         "beach_rating": "Good",
         "beach_score": 70,
         "best_snorkel_spot": "South Beach",
@@ -87,8 +87,8 @@
         "best_beach_spot": "Leighton Beach",
         "uv_warning": "Extreme - cover up by 10am",
         "crowd_prediction": "Busy",
-        "one_liner": "Strong winds but Leighton's shelter scores mean decent beach time",
-        "pro_tip": "Dog beach at South Beach - perfect for four-legged family members when it's gusty"
+        "one_liner": "Gusty 40km/h winds but sheltered spots still deliver",
+        "pro_tip": "High tide at 9:20am - time your snorkel for maximum depth"
       },
       {
         "date": "2026-02-02",
@@ -99,13 +99,13 @@
         "snorkel_score": 75,
         "beach_rating": "Perfect",
         "beach_score": 90,
-        "best_snorkel_spot": "South Beach",
+        "best_snorkel_spot": "Mettams Pool",
         "best_snorkel_time": "7am-10am",
         "best_beach_spot": "Cottesloe Beach",
         "uv_warning": "Extreme - cover up by 10am",
-        "crowd_prediction": "Quiet",
-        "one_liner": "Back to beauty - 29\u00b0C and light winds make it a scorcher",
-        "pro_tip": "High tide at 10:10am means deeper water at North Cottesloe's Peters Pool"
+        "crowd_prediction": "Moderate",
+        "one_liner": "29\u00b0C scorcher - Mettams Pool magic with crystal viz",
+        "pro_tip": "Hottest day of the week - perfect for extended water sessions"
       },
       {
         "date": "2026-02-03",
@@ -115,40 +115,49 @@
         "snorkel_rating": "Poor",
         "snorkel_score": 0,
         "beach_rating": "Poor",
-        "beach_score": 30,
+        "beach_score": 40,
         "best_snorkel_spot": "None recommended",
-        "best_snorkel_time": "Avoid",
+        "best_snorkel_time": "Skip it",
         "best_beach_spot": "Hillarys Beach",
         "uv_warning": null,
         "crowd_prediction": "Quiet",
-        "one_liner": "Wild winds and big waves - even Cottesloe only rates 30/100",
-        "pro_tip": "Perfect day for Hillarys Boat Harbour shopping and fish & chips instead"
+        "one_liner": "Brutal 44km/h gusts - even Hillarys harbour struggles",
+        "pro_tip": "Perfect day for beach cafe hopping instead of swimming"
       }
     ],
     "week_top_picks": {
       "best_snorkel": {
-        "day": "Thursday",
-        "spot": "South Beach",
+        "day": "Monday",
+        "spot": "Mettams Pool",
         "time": "7am-10am",
-        "why": "Perfect visibility, calm seas, and low tide crystal clarity"
+        "why": "29\u00b0C air, calm winds, and protected reef lagoon"
       },
       "best_beach": {
         "day": "Friday",
         "spot": "Cottesloe Beach",
-        "time": "8am-2pm",
-        "why": "Dream conditions - 25\u00b0C, light winds, perfect for sunset drinks"
+        "time": "8am-6pm",
+        "why": "Light 10km/h winds and iconic sunset conditions"
       },
       "hidden_gem": {
-        "day": "Monday",
-        "spot": "North Cottesloe",
-        "why": "29\u00b0C scorcher with high tide filling Peters Pool perfectly"
+        "day": "Thursday",
+        "spot": "South Beach",
+        "why": "Perfect snorkelling scores while others focus on weekend"
       }
     },
     "alerts": [
-      "Tuesday 3rd Feb - Dangerous conditions with 44km/h gusts and 1m+ waves",
-      "Weekend crowds expected at Cottesloe - consider City Beach alternatives"
+      "Tuesday is a write-off - 44km/h gusts make all beaches challenging",
+      "UV extreme all week except Tuesday - slip, slop, slap by 10am"
     ],
-    "fun_fact": "Peters Pool at North Cottesloe was formed by a limestone reef that creates a natural lagoon - it's deepest at high tide around 10am Monday, making it perfect for floating and snorkelling!"
+    "fun_fact": "The Fremantle Doctor sea breeze got its nickname because it provided 'medicinal' relief from Perth's hot inland winds. This week it arrives fashionably late each day - perfect for morning glass-offs!",
+    "_meta": {
+      "missing_beaches": [
+        "City Beach",
+        "Floreat Beach",
+        "Scarborough Beach",
+        "Trigg Beach"
+      ],
+      "water_temp_c": 23.2
+    }
   },
   "beaches": [
     {
