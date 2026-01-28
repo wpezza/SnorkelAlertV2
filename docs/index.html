@@ -3,93 +3,728 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌊 Snorkel Alert v2 | Perth Beach Forecast</title>
+    <title>🌊 Perth Beach Forecast | Snorkel Alert v2</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --ocean-deep: #0a1628;
             --ocean-mid: #1a3a5c;
+            --ocean-light: #2d5a7b;
+            --sand: #f4e4c1;
+            --sand-light: #faf6ed;
+            --coral: #ff6b6b;
             --seafoam: #4ecdc4;
             --sun: #ffe66d;
+            --perfect: #00c853;
+            --good: #2196f3;
+            --ok: #ff9800;
+            --poor: #f44336;
         }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(180deg, var(--ocean-deep), var(--ocean-mid));
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: linear-gradient(180deg, var(--ocean-deep) 0%, var(--ocean-mid) 50%, var(--ocean-light) 100%);
             min-height: 100vh;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+        }
+        
+        .wave-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 200px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff10' d='M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,181.3C672,192,768,160,864,149.3C960,139,1056,149,1152,154.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") repeat-x;
+            animation: wave 20s linear infinite;
+        }
+        
+        .wave:nth-child(2) {
+            bottom: 10px;
+            opacity: 0.5;
+            animation-duration: 15s;
+            animation-direction: reverse;
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
-        .container { max-width: 600px; }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
         .logo {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 3rem;
+            font-weight: 700;
             background: linear-gradient(135deg, var(--seafoam), var(--sun));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+            background-clip: text;
+            margin-bottom: 10px;
         }
+        
         .tagline {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            margin-bottom: 30px;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.1rem;
         }
-        .status {
-            background: rgba(255,255,255,0.1);
+        
+        .updated {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .headline-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
             padding: 30px;
-            border-radius: 20px;
             margin: 20px 0;
+            text-align: center;
         }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255,255,255,0.2);
-            border-top-color: var(--seafoam);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .btn {
-            display: inline-block;
-            background: var(--seafoam);
-            color: var(--ocean-deep);
-            padding: 15px 30px;
-            border-radius: 10px;
-            text-decoration: none;
+        
+        .headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
             font-weight: 700;
-            margin: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .summary {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .water-temp {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(78, 205, 196, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin: 40px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .day-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .day-card.weekend {
+            border-color: var(--sun);
+            box-shadow: 0 0 30px rgba(255, 230, 109, 0.2);
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .day-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .weekend-badge {
+            background: var(--sun);
+            color: var(--ocean-deep);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .ratings {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .rating {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .rating.snorkel { background: rgba(78, 205, 196, 0.2); }
+        .rating.beach { background: rgba(255, 230, 109, 0.2); }
+        
+        .rating-icon { font-size: 1.5rem; }
+        .rating-label { font-size: 0.75rem; opacity: 0.7; margin-top: 4px; }
+        .rating-value {
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        
+        .rating-value.perfect { color: var(--perfect); }
+        .rating-value.good { color: var(--good); }
+        .rating-value.ok { color: var(--ok); }
+        .rating-value.poor { color: var(--poor); }
+        
+        .day-details {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .day-details p {
+            margin: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .tip {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .tip-icon { opacity: 0.7; }
+        
+        .uv-alert {
+            background: rgba(244, 67, 54, 0.2);
+            border-left: 3px solid var(--coral);
+            padding: 10px 12px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .picks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .pick-card {
+            background: linear-gradient(145deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.05));
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+        }
+        
+        .pick-card.beach {
+            background: linear-gradient(145deg, rgba(255, 230, 109, 0.2), rgba(255, 230, 109, 0.05));
+            border-color: rgba(255, 230, 109, 0.3);
+        }
+        
+        .pick-card.gem {
+            background: linear-gradient(145deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.05));
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+        
+        .pick-type {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .pick-spot {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        
+        .pick-when {
+            color: var(--seafoam);
+            margin: 5px 0;
+        }
+        
+        .pick-why {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        .alerts-section {
+            margin: 30px 0;
+        }
+        
+        .alert {
+            background: rgba(255, 152, 0, 0.15);
+            border-left: 4px solid var(--ok);
+            padding: 15px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .beaches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .beach-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
             transition: transform 0.2s;
         }
-        .btn:hover { transform: scale(1.05); }
-        .btn.secondary {
-            background: rgba(255,255,255,0.1);
-            color: white;
+        
+        .beach-card:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .beach-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .beach-area {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+        
+        .beach-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-top: 8px;
+        }
+        
+        .beach-type.snorkel { background: rgba(78, 205, 196, 0.3); }
+        .beach-type.beach { background: rgba(255, 230, 109, 0.3); }
+        .beach-type.both { background: rgba(255, 107, 107, 0.3); }
+        
+        .fun-fact {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .fun-fact-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+        }
+        
+        footer a {
+            color: var(--seafoam);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .logo { font-size: 2rem; }
+            .headline { font-size: 1.5rem; }
+            .days-grid { grid-template-columns: 1fr; }
+            .picks-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">🌊 Snorkel Alert v2</div>
-        <p class="tagline">Perth's Smartest Beach Forecast</p>
-        
-        <div class="status">
-            <div class="spinner"></div>
-            <h2>Generating First Forecast...</h2>
-            <p style="margin-top: 15px; opacity: 0.7;">
-                Run the workflow in GitHub Actions to generate your first forecast.
-                This page will automatically update with beautiful beach conditions!
-            </p>
-        </div>
-        
-        <a href="settings.html" class="btn">⚙️ Setup Guide</a>
-        <a href="https://github.com/wpezza/snorkel-alert-v2" class="btn secondary">📖 Documentation</a>
+    <div class="wave-bg">
+        <div class="wave"></div>
+        <div class="wave"></div>
     </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">🌊 Snorkel Alert</div>
+            <div class="tagline">Perth's smartest beach forecast</div>
+            <div class="updated">Updated Wednesday 28 January 2026, 11:55 AM AWST</div>
+        </header>
+        
+        <div class="headline-card">
+            <div class="headline">Mixed Week - Friday & Monday Shine Brightest</div>
+            <div class="summary">A tale of two halves with Friday and Monday delivering perfect conditions across all beaches. Mid-week brings blustery winds making Tuesday a write-off for water activities. Cottesloe and North Cottesloe lead the charge on the best days, while Mettams Pool offers the most consistent snorkelling when conditions allow.</div>
+            <div class="water-temp">
+                🌡️ Water: Perfect - boardies and rashie all day
+            </div>
+        </div>
+<div class="alerts-section"><div class="alert"><span>⚠️</span><span>Strong winds Tuesday - avoid all water activities</span></div><div class="alert"><span>⚠️</span><span>UV Extreme most days - slip, slop, slap before 10am</span></div><div class="alert"><span>⚠️</span><span>Weekend crowds building - arrive before 9am for parking</span></div></div><div class="section-title">🏆 Top Picks This Week</div><div class="picks-grid">
+            <div class="pick-card snorkel">
+                <div class="pick-type">🤿 Best Snorkelling</div>
+                <div class="pick-spot">South Beach</div>
+                <div class="pick-when">Monday • 7am-10am</div>
+                <div class="pick-why">Excellent visibility with warm 29°C air temp and minimal wind</div>
+            </div>
+
+            <div class="pick-card beach">
+                <div class="pick-type">☀️ Best Beach Day</div>
+                <div class="pick-spot">Cottesloe Beach</div>
+                <div class="pick-when">Friday</div>
+                <div class="pick-why">Light winds and perfect 23°C - iconic Perth beach at its finest</div>
+            </div>
+
+            <div class="pick-card gem">
+                <div class="pick-type">💎 Hidden Gem</div>
+                <div class="pick-spot">Watermans Bay</div>
+                <div class="pick-when">Monday</div>
+                <div class="pick-why">Quiet weekday with premium snorkelling conditions - locals' secret</div>
+            </div>
+</div><div class="section-title">📅 7-Day Forecast</div><div class="days-grid">
+            <div class="day-card ">
+                <div class="day-header">
+                    <span class="day-name">Wednesday</span>
+                    
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value ok">OK</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>Leighton Beach</strong> (6am-8am)</span></p>
+                    <p>☀️ <span><strong>Leighton Beach</strong></span></p>
+                    <p>👥 <span>Quiet</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Early bird gets the worm - decent at Leighton before winds pick up
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card ">
+                <div class="day-header">
+                    <span class="day-name">Thursday</span>
+                    
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>South Beach</strong> (7am-10am)</span></p>
+                    <p>☀️ <span><strong>Leighton Beach</strong></span></p>
+                    <p>👥 <span>Quiet</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Solid mid-week session with South Beach leading snorkel visibility
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card ">
+                <div class="day-header">
+                    <span class="day-name">Friday</span>
+                    
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value perfect">Perfect</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>Watermans Bay</strong> (6am-11am)</span></p>
+                    <p>☀️ <span><strong>Cottesloe Beach</strong></span></p>
+                    <p>👥 <span>Moderate</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Golden Friday - light winds make every beach a winner
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card weekend">
+                <div class="day-header">
+                    <span class="day-name">Saturday</span>
+                    <span class="weekend-badge">WEEKEND</span>
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value ok">OK</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>Leighton Beach</strong> (6am-8am)</span></p>
+                    <p>☀️ <span><strong>Leighton Beach</strong></span></p>
+                    <p>👥 <span>Busy</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Weekend warriors need to get in early before winds build
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card weekend">
+                <div class="day-header">
+                    <span class="day-name">Sunday</span>
+                    <span class="weekend-badge">WEEKEND</span>
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value ok">OK</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>South Beach</strong> (6am-8am)</span></p>
+                    <p>☀️ <span><strong>Leighton Beach</strong></span></p>
+                    <p>👥 <span>Busy</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Gusty Sunday - stick to protected spots and get in early
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card ">
+                <div class="day-header">
+                    <span class="day-name">Monday</span>
+                    
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value good">Good</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value perfect">Perfect</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>South Beach</strong> (6am-11am)</span></p>
+                    <p>☀️ <span><strong>Cottesloe Beach</strong></span></p>
+                    <p>👥 <span>Quiet</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Magic Monday - warm temps and calm conditions across the board
+                </div>
+                <div class='uv-alert'>⚠️ Extreme - cover up by 10am</div>
+            </div>
+
+            <div class="day-card ">
+                <div class="day-header">
+                    <span class="day-name">Tuesday</span>
+                    
+                </div>
+                <div class="ratings">
+                    <div class="rating snorkel">
+                        <div class="rating-icon">🤿</div>
+                        <div class="rating-label">Snorkel</div>
+                        <div class="rating-value poor">Poor</div>
+                    </div>
+                    <div class="rating beach">
+                        <div class="rating-icon">☀️</div>
+                        <div class="rating-label">Beach</div>
+                        <div class="rating-value poor">Poor</div>
+                    </div>
+                </div>
+                <div class="day-details">
+                    <p>🤿 <span><strong>None recommended</strong> (Avoid water activities)</span></p>
+                    <p>☀️ <span><strong>Hillarys Beach</strong></span></p>
+                    <p>👥 <span>Quiet</span></p>
+                </div>
+                <div class="tip">
+                    <span class="tip-icon">💡</span> Howling Tuesday - beach walks only, leave the swimmers at home
+                </div>
+                
+            </div>
+</div><div class="section-title">🏖️ Beach Directory</div><div class="beaches-grid">
+            <div class="beach-card">
+                <div class="beach-name">Bathers Beach</div>
+                <div class="beach-area">Fremantle</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">South Beach</div>
+                <div class="beach-area">Fremantle</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Leighton Beach</div>
+                <div class="beach-area">North Fremantle</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Cottesloe Beach</div>
+                <div class="beach-area">Cottesloe</div>
+                <div class="beach-type both">🤿☀️ Both</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">North Cottesloe</div>
+                <div class="beach-area">Cottesloe</div>
+                <div class="beach-type snorkel">🤿 Snorkelling</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Swanbourne Beach</div>
+                <div class="beach-area">Swanbourne</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">City Beach</div>
+                <div class="beach-area">City Beach</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Floreat Beach</div>
+                <div class="beach-area">Floreat</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Scarborough Beach</div>
+                <div class="beach-area">Scarborough</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Trigg Beach</div>
+                <div class="beach-area">Trigg</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Mettams Pool</div>
+                <div class="beach-area">Trigg</div>
+                <div class="beach-type snorkel">🤿 Snorkelling</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Watermans Bay</div>
+                <div class="beach-area">Watermans</div>
+                <div class="beach-type snorkel">🤿 Snorkelling</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Sorrento Beach</div>
+                <div class="beach-area">Sorrento</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Hillarys Beach</div>
+                <div class="beach-area">Hillarys</div>
+                <div class="beach-type beach">☀️ Swimming</div>
+            </div>
+
+            <div class="beach-card">
+                <div class="beach-name">Boyinaboat Reef</div>
+                <div class="beach-area">Hillarys</div>
+                <div class="beach-type snorkel">🤿 Snorkelling</div>
+            </div>
+</div>
+        <div class="fun-fact">
+            <div class="fun-fact-icon">💡</div>
+            <div>Perth's sea breeze (the Fremantle Doctor) got its nickname because it provided relief from hot summer days - expect it to kick in around midday on the calmer days this week!</div>
+        </div>
+
+        <footer>
+            <p>Built with 🤿 by Snorkel Alert v2</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/wpezza/SnorkleAlert">GitHub</a> •
+                Data from Open-Meteo
+            </p>
+        </footer>
+    </div>
+    
+    <script>
+        // Auto-refresh every hour
+        setTimeout(() => location.reload(), 3600000);
+    </script>
 </body>
 </html>
