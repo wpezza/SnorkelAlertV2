@@ -26,7 +26,6 @@ import random
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import anthropic
-import difflib  # (added) for robust key matching
 
 # =============================================================================
 # CONFIG
@@ -45,7 +44,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 def create_session() -> requests.Session:
     """Create a requests session with retry logic."""
     session = requests.Session()
-
+    
     retry_strategy = Retry(
         total=5,                      # 5 retries
         backoff_factor=2,             # 2, 4, 8, 16, 32 seconds
@@ -53,16 +52,16 @@ def create_session() -> requests.Session:
         allowed_methods=["GET"],
         raise_on_status=False
     )
-
+    
     adapter = HTTPAdapter(
         max_retries=retry_strategy,
         pool_connections=10,
         pool_maxsize=10
     )
-
+    
     session.mount("https://", adapter)
     session.mount("http://", adapter)
-
+    
     return session
 
 # Global session
@@ -73,7 +72,7 @@ SESSION = create_session()
 # =============================================================================
 
 SNORKEL_SPOTS = [
-    {"name": "Mettams Pool", "lat": -31.8195, "lon": 115.7517,
+    {"name": "Mettams Pool", "lat": -31.8195, "lon": 115.7517, 
      "notes": "Best snorkelling in Perth. Protected reef lagoon, sheltered from W/SW/NW swell. Shallow, beginners welcome. Gets busy weekends."},
     {"name": "Hamersley Pool", "lat": -31.8150, "lon": 115.7510,
      "notes": "600m north of Mettams. Same conditions, fewer crowds. Reef-enclosed tidal pool."},
@@ -133,25 +132,25 @@ WEBCAMS = [
 
 def fetch_with_retry(url: str, params: dict, max_retries: int = 3) -> dict:
     """Fetch data with retry logic and rate limiting protection."""
-
+    
     for attempt in range(max_retries):
         try:
             # Add jitter delay to avoid rate limiting (0.5-1.5 seconds)
             delay = 0.5 + random.random()
             time.sleep(delay)
-
+            
             resp = SESSION.get(url, params=params, timeout=45)
-
+            
             # Check for rate limiting
             if resp.status_code == 429:
                 wait_time = int(resp.headers.get("Retry-After", 30))
                 print(f"⏳ Rate limited, waiting {wait_time}s...", end=" ", flush=True)
                 time.sleep(wait_time)
                 continue
-
+            
             resp.raise_for_status()
             return resp.json()
-
+            
         except requests.exceptions.Timeout:
             if attempt < max_retries - 1:
                 wait_time = (attempt + 1) * 5  # 5, 10, 15 seconds
@@ -159,7 +158,7 @@ def fetch_with_retry(url: str, params: dict, max_retries: int = 3) -> dict:
                 time.sleep(wait_time)
             else:
                 raise
-
+                
         except requests.exceptions.RequestException as e:
             if attempt < max_retries - 1:
                 wait_time = (attempt + 1) * 3
@@ -167,7 +166,7 @@ def fetch_with_retry(url: str, params: dict, max_retries: int = 3) -> dict:
                 time.sleep(wait_time)
             else:
                 raise
-
+    
     raise Exception("Max retries exceeded")
 
 def fetch_marine_data(lat: float, lon: float) -> dict:
@@ -185,7 +184,7 @@ def fetch_weather_data(lat: float, lon: float) -> dict:
     return fetch_with_retry("https://api.open-meteo.com/v1/forecast", {
         "latitude": lat, "longitude": lon,
         "hourly": ["temperature_2m", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"],
-        "daily": ["temperature_2m_max", "temperature_2m_min", "wind_speed_10m_max",
+        "daily": ["temperature_2m_max", "temperature_2m_min", "wind_speed_10m_max", 
                   "wind_direction_10m_dominant", "sunrise", "sunset", "uv_index_max"],
         "timezone": "Australia/Perth",
         "forecast_days": 7
@@ -200,7 +199,7 @@ def fetch_water_temp() -> float:
             "timezone": "Australia/Perth",
             "forecast_days": 1
         })
-        temps = [t for t in data.get("hourly", {}).get("sea_surface_temperature", []) if t is not None]
+        temps = [t for t in data.get("hourly", {}).get("sea_surface_temperature", []) if t]
         return round(sum(temps) / len(temps), 1) if temps else None
     except:
         return None
@@ -209,12 +208,12 @@ def fetch_all_data() -> tuple[dict, list]:
     """Fetch data for all beaches. Returns (data_dict, errors_list)."""
     all_data = {}
     errors = []
-
+    
     # Combine all spots (avoid duplicates by name)
     all_spots = {s["name"]: s for s in SNORKEL_SPOTS + SUNBATHING_SPOTS}
-
+    
     total = len(all_spots)
-
+    
     for i, (name, spot) in enumerate(all_spots.items()):
         print(f"  📍 {name} ({i+1}/{total})...", end=" ", flush=True)
         try:
@@ -228,11 +227,11 @@ def fetch_all_data() -> tuple[dict, list]:
                 "weather": weather
             }
             print("✅")
-
+            
         except Exception as e:
             print(f"❌ {str(e)[:50]}")
             errors.append(name)
-
+    
     return all_data, errors
 
 # =============================================================================
@@ -245,58 +244,16 @@ def get_ordinal(n: int) -> str:
         return "th"
     return {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
 
-def extract_json_object(text: str) -> str:
-    """Extract the first top-level JSON object from Claude output (robust to pre/post text)."""
-    if "```json" in text:
-        text = text.split("```json", 1)[1].split("```", 1)[0]
-    elif "```" in text:
-        text = text.split("```", 1)[1].split("```", 1)[0]
-
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end == -1 or end <= start:
-        raise ValueError("No JSON object found in Claude response")
-    return text[start:end + 1]
-
-def normalize_forecast_keys(forecast: dict) -> dict:
-    """Map Claude spot keys back to canonical names using fuzzy matching."""
-    canonical_snorkel = [s["name"] for s in SNORKEL_SPOTS]
-    canonical_sun = [s["name"] for s in SUNBATHING_SPOTS]
-
-    def remap(section_name: str, canonical: list[str]):
-        section = forecast.get(section_name, {})
-        if not isinstance(section, dict):
-            forecast[section_name] = {}
-            return
-
-        new_section = {}
-        for k, v in section.items():
-            if k in canonical:
-                new_section[k] = v
-                continue
-
-            match = difflib.get_close_matches(k, canonical, n=1, cutoff=0.72)
-            if match:
-                new_section[match[0]] = v
-            else:
-                new_section[k] = v  # preserve unmatched for inspection
-
-        forecast[section_name] = new_section
-
-    remap("snorkel", canonical_snorkel)
-    remap("sunbathing", canonical_sun)
-    return forecast
-
 def generate_forecast(raw_data: dict, water_temp: float, errors: list) -> dict:
     """Send raw data to Claude for analysis."""
-
+    
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-
+    
     # Get dates for next 7 days
     dates = [(datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
-    date_labels = [(datetime.now() + timedelta(days=i)).strftime("%a %-d") +
+    date_labels = [(datetime.now() + timedelta(days=i)).strftime("%a %-d") + 
                    get_ordinal((datetime.now() + timedelta(days=i)).day) for i in range(7)]
-
+    
     prompt = f"""You are a professional beach and marine conditions forecaster for Perth, Western Australia.
 
 Analyze this raw weather data and create a 7-day forecast.
@@ -325,7 +282,7 @@ SUNBATHING (consider temp AND wind):
 - 🔴 Poor: temp <22°C or >38°C OR wind >18 km/h
 
 ## BEST TIME CALCULATION
-For snorkelling, analyze the hourly data and find the best window (usually early morning before sea breeze).
+For snorkelling, analyze the hourly data and find the best window (usually early morning before sea breeze). 
 Return as 24-hour format range, e.g., "06:00-09:00" or "07:00-10:00".
 The sea breeze (Fremantle Doctor) typically arrives between 11:00-14:00 in summer.
 
@@ -384,15 +341,18 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
         max_tokens=8000,
         messages=[{"role": "user", "content": prompt}]
     )
-
-    raw_text = response.content[0].text
-    json_text = extract_json_object(raw_text)
-    forecast = json.loads(json_text.strip())
-
-    # Normalize keys so dashboard always matches canonical spot names
-    forecast = normalize_forecast_keys(forecast)
-
+    
+    text = response.content[0].text
+    
+    # Extract JSON
+    if "```json" in text:
+        text = text.split("```json")[1].split("```")[0]
+    elif "```" in text:
+        text = text.split("```")[1].split("```")[0]
+    
+    forecast = json.loads(text.strip())
     forecast["errors"] = errors
+    
     return forecast
 
 # =============================================================================
@@ -401,42 +361,42 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
 
 def format_pushover(forecast: dict) -> tuple[str, str]:
     """Format Pushover notification with best times."""
-
+    
     lines = []
-
+    
     # Snorkelling next 3 days
     lines.append("SNORKELLING (Next 3 Days)")
-
+    
     dates = forecast.get("dates", [])[:3]
     date_labels = forecast.get("date_labels", [])[:3]
     snorkel_data = forecast.get("snorkel", {})
-
+    
     has_good_conditions = False
-
+    
     for i, (date, label) in enumerate(zip(dates, date_labels)):
         # Find best spots for this day
         perfect_spots = []
         good_spots = []
         best_time = None
-
+        
         for spot, days in snorkel_data.items():
-            if isinstance(days, dict) and date in days:
+            if date in days:
                 rating = days[date].get("rating", "")
                 spot_time = days[date].get("best_time", "")
-
+                
                 # Get best time from first perfect/good spot
                 if not best_time and spot_time and rating in ["Perfect", "Good"]:
                     best_time = spot_time
-
+                
                 short_name = spot.replace(" Pool", "").replace(" Bay", "").replace(" Reef", "").replace(" Wreck", "").replace(" Lagoon", "")
-
+                
                 if rating == "Perfect":
                     perfect_spots.append(short_name)
                 elif rating == "Good":
                     good_spots.append(short_name)
-
+        
         time_str = f" ({best_time})" if best_time else ""
-
+        
         if perfect_spots:
             has_good_conditions = True
             spots_str = ", ".join(perfect_spots[:3])
@@ -453,15 +413,15 @@ def format_pushover(forecast: dict) -> tuple[str, str]:
             lines.append(f"   {spots_str}")
         else:
             # Check if any OK
-            ok_spots = [s for s, d in snorkel_data.items() if isinstance(d, dict) and date in d and d[date].get("rating") == "OK"]
+            ok_spots = [s for s, d in snorkel_data.items() if date in d and d[date].get("rating") == "OK"]
             if ok_spots:
                 lines.append(f"🟡 {label}: OK conditions")
             else:
                 lines.append(f"🔴 {label}: Poor conditions")
-
+    
     if not has_good_conditions:
         lines = ["SNORKELLING (Next 3 Days)", "🔴 No good conditions - check back later"]
-
+    
     # Today's weather
     lines.append("")
     today = forecast.get("today", {})
@@ -470,10 +430,10 @@ def format_pushover(forecast: dict) -> tuple[str, str]:
     wind = today.get("wind_speed", "?")
     wind_dir = today.get("wind_direction", "")
     desc = today.get("description", "")
-
+    
     lines.append(f"TODAY ({today_label})")
-    lines.append(f"{temp}°C, {wind}km/h {wind_dir}, {str(desc).lower()}")
-
+    lines.append(f"{temp}°C, {wind}km/h {wind_dir}, {desc.lower()}")
+    
     # Errors
     errors = forecast.get("errors", [])
     if errors:
@@ -482,19 +442,15 @@ def format_pushover(forecast: dict) -> tuple[str, str]:
             lines.append(f"⚠️ Missing: {', '.join(errors)}")
         else:
             lines.append(f"⚠️ Missing data: {len(errors)} beaches")
-
+    
     return "🤿 Snorkel Alert", "\n".join(lines)
 
 def send_pushover(title: str, message: str):
-    """Send Pushover notification (with response debug)."""
+    """Send Pushover notification."""
     if not PUSHOVER_USER_KEY or not PUSHOVER_API_TOKEN:
         print("  ⚠️ Pushover not configured")
         return
-
-    # Keep message safely within typical Pushover limits without changing content intent
-    if len(message) > 950:
-        message = message[:950]
-
+    
     try:
         resp = requests.post("https://api.pushover.net/1/messages.json", data={
             "token": PUSHOVER_API_TOKEN,
@@ -503,13 +459,6 @@ def send_pushover(title: str, message: str):
             "message": message,
             "html": 0
         }, timeout=30)
-
-        print(f"  📡 Pushover HTTP {resp.status_code}")
-        try:
-            print(f"  📦 Pushover response: {resp.json()}")
-        except Exception:
-            print(f"  📦 Pushover raw response: {resp.text[:500]}")
-
         resp.raise_for_status()
         print("  📱 Pushover sent ✅")
     except Exception as e:
@@ -519,7 +468,7 @@ def send_telegram(message: str):
     """Send Telegram notification."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
-
+    
     try:
         requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
             data={"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}, timeout=30)
@@ -533,30 +482,30 @@ def send_telegram(message: str):
 
 def generate_dashboard(forecast: dict) -> str:
     """Generate HTML dashboard with tables."""
-
+    
     now = datetime.now()
     updated = now.strftime("%A %-d %B %Y, %-I:%M%p").replace("AM", "am").replace("PM", "pm")
-
+    
     dates = forecast.get("dates", [])
     date_labels = forecast.get("date_labels", [])
     snorkel = forecast.get("snorkel", {})
     sunbathing = forecast.get("sunbathing", {})
     top_picks = forecast.get("top_picks", {})
     errors = forecast.get("errors", [])
-
+    
     # Determine weekends
     weekends = []
     for i, d in enumerate(dates):
         dt = datetime.strptime(d, "%Y-%m-%d")
         if dt.weekday() >= 5:
             weekends.append(i)
-
+    
     def rating_cell(data: dict, show_type: str = "snorkel") -> str:
         """Generate a table cell for a rating."""
         rating = data.get("rating", "?")
-
+        
         icon = {"Perfect": "⭐", "Good": "🟢", "OK": "🟡", "Poor": "🔴"}.get(rating, "❓")
-
+        
         if show_type == "snorkel":
             waves = data.get("waves", "?")
             best_time = data.get("best_time", "")
@@ -569,59 +518,61 @@ def generate_dashboard(forecast: dict) -> str:
             temp = data.get("temp", "?")
             wind = data.get("wind", "?")
             detail = f"{temp}° {wind}k"
-
+        
         rating_class = rating.lower() if rating in ["Perfect", "Good", "OK", "Poor"] else ""
-
+        
         return f'<td class="rating-cell {rating_class}"><span class="icon">{icon}</span><span class="detail">{detail}</span></td>'
-
-    # Build snorkel table rows (always render all spots)
+    
+    # Build snorkel table rows
     snorkel_rows = ""
     for spot in [s["name"] for s in SNORKEL_SPOTS]:
-        days = snorkel.get(spot, {})
+        if spot not in snorkel:
+            continue
         cells = ""
         for date in dates:
-            if isinstance(days, dict) and date in days:
-                cells += rating_cell(days[date], "snorkel")
+            if date in snorkel[spot]:
+                cells += rating_cell(snorkel[spot][date], "snorkel")
             else:
                 cells += '<td class="rating-cell">-</td>'
         snorkel_rows += f'<tr><td class="beach-name">{spot}</td>{cells}</tr>\n'
-
-    # Build sunbathing table rows (always render all spots)
+    
+    # Build sunbathing table rows
     sunbathing_rows = ""
     for spot in [s["name"] for s in SUNBATHING_SPOTS]:
-        days = sunbathing.get(spot, {})
+        if spot not in sunbathing:
+            continue
         cells = ""
         for date in dates:
-            if isinstance(days, dict) and date in days:
-                cells += rating_cell(days[date], "sunbathing")
+            if date in sunbathing[spot]:
+                cells += rating_cell(sunbathing[spot][date], "sunbathing")
             else:
                 cells += '<td class="rating-cell">-</td>'
         sunbathing_rows += f'<tr><td class="beach-name">{spot}</td>{cells}</tr>\n'
-
+    
     # Build header row
     header_cells = ""
     for i, label in enumerate(date_labels):
         weekend_class = "weekend" if i in weekends else ""
         weekend_star = "★ " if i in weekends else ""
         header_cells += f'<th class="{weekend_class}">{weekend_star}{label}</th>'
-
+    
     # Error banner
     error_html = ""
     if errors:
         error_html = f'<div class="error-banner">⚠️ Missing data for: {", ".join(errors)}</div>'
-
+    
     # Top picks with time
     best_snorkel = top_picks.get("best_snorkel", {})
     best_sunbathing = top_picks.get("best_sunbathing", {})
     hidden_gem = top_picks.get("hidden_gem", {})
-
+    
     # Format snorkel pick with time
     snorkel_time = best_snorkel.get("time", "")
     snorkel_detail = f"{best_snorkel.get('day', '')} {snorkel_time} — {best_snorkel.get('why', '')}"
-
+    
     gem_time = hidden_gem.get("time", "")
     gem_detail = f"{hidden_gem.get('day', '')} {gem_time} — {hidden_gem.get('why', '')}"
-
+    
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -640,9 +591,9 @@ def generate_dashboard(forecast: dict) -> str:
             --ok: #f59e0b;
             --poor: #ef4444;
         }}
-
+        
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-
+        
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(180deg, var(--ocean) 0%, var(--ocean-mid) 100%);
@@ -650,35 +601,35 @@ def generate_dashboard(forecast: dict) -> str:
             color: white;
             line-height: 1.5;
         }}
-
+        
         .container {{
             max-width: 1100px;
             margin: 0 auto;
             padding: 20px;
         }}
-
+        
         header {{
             text-align: center;
             padding: 30px 20px;
         }}
-
+        
         .logo {{
             font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 5px;
         }}
-
+        
         .tagline {{
             opacity: 0.6;
             font-size: 0.95rem;
         }}
-
+        
         .updated {{
             margin-top: 8px;
             font-size: 0.8rem;
             opacity: 0.4;
         }}
-
+        
         .summary-card {{
             background: rgba(255,255,255,0.08);
             border-radius: 12px;
@@ -687,7 +638,7 @@ def generate_dashboard(forecast: dict) -> str:
             font-size: 1rem;
             line-height: 1.6;
         }}
-
+        
         .water-temp {{
             display: inline-block;
             margin-top: 12px;
@@ -696,7 +647,7 @@ def generate_dashboard(forecast: dict) -> str:
             border-radius: 20px;
             font-size: 0.9rem;
         }}
-
+        
         .error-banner {{
             background: rgba(239,68,68,0.2);
             border: 1px solid rgba(239,68,68,0.4);
@@ -705,24 +656,24 @@ def generate_dashboard(forecast: dict) -> str:
             margin: 15px 0;
             font-size: 0.85rem;
         }}
-
+        
         .top-picks {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 12px;
             margin: 20px 0;
         }}
-
+        
         .pick-card {{
             background: rgba(255,255,255,0.06);
             border-radius: 10px;
             padding: 16px;
         }}
-
+        
         .pick-card.snorkel {{ border-left: 3px solid var(--seafoam); }}
         .pick-card.sunbathing {{ border-left: 3px solid var(--perfect); }}
         .pick-card.gem {{ border-left: 3px solid var(--good); }}
-
+        
         .pick-label {{
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -730,18 +681,18 @@ def generate_dashboard(forecast: dict) -> str:
             opacity: 0.6;
             margin-bottom: 4px;
         }}
-
+        
         .pick-spot {{
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 2px;
         }}
-
+        
         .pick-detail {{
             font-size: 0.85rem;
             opacity: 0.7;
         }}
-
+        
         .section-title {{
             font-size: 1.1rem;
             font-weight: 600;
@@ -750,13 +701,13 @@ def generate_dashboard(forecast: dict) -> str:
             align-items: center;
             gap: 8px;
         }}
-
+        
         .table-container {{
             overflow-x: auto;
             margin: 0 -20px;
             padding: 0 20px;
         }}
-
+        
         table {{
             width: 100%;
             border-collapse: collapse;
@@ -765,52 +716,52 @@ def generate_dashboard(forecast: dict) -> str:
             border-radius: 10px;
             overflow: hidden;
         }}
-
+        
         th, td {{
             padding: 10px 8px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }}
-
+        
         th {{
             background: rgba(255,255,255,0.05);
             font-weight: 600;
             font-size: 0.8rem;
         }}
-
+        
         th.weekend {{
             background: rgba(255,215,0,0.15);
             color: var(--perfect);
         }}
-
+        
         .beach-name {{
             text-align: left;
             font-weight: 500;
             white-space: nowrap;
             padding-left: 12px;
         }}
-
+        
         .rating-cell {{
             min-width: 70px;
         }}
-
+        
         .rating-cell .icon {{
             display: block;
             font-size: 1.1rem;
         }}
-
+        
         .rating-cell .detail {{
             display: block;
             font-size: 0.7rem;
             opacity: 0.6;
             margin-top: 2px;
         }}
-
+        
         .rating-cell.perfect {{ background: rgba(255,215,0,0.1); }}
         .rating-cell.good {{ background: rgba(34,197,94,0.1); }}
         .rating-cell.ok {{ background: rgba(245,158,11,0.08); }}
         .rating-cell.poor {{ background: rgba(239,68,68,0.08); }}
-
+        
         .legend {{
             display: flex;
             flex-wrap: wrap;
@@ -819,20 +770,20 @@ def generate_dashboard(forecast: dict) -> str:
             font-size: 0.8rem;
             opacity: 0.7;
         }}
-
+        
         .legend-item {{
             display: flex;
             align-items: center;
             gap: 4px;
         }}
-
+        
         .webcams {{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
             margin: 15px 0;
         }}
-
+        
         .webcam-link {{
             display: flex;
             flex-direction: column;
@@ -844,31 +795,31 @@ def generate_dashboard(forecast: dict) -> str:
             color: white;
             transition: background 0.2s;
         }}
-
+        
         .webcam-link:hover {{
             background: rgba(255,255,255,0.1);
         }}
-
+        
         .webcam-icon {{
             font-size: 1.5rem;
             margin-bottom: 5px;
         }}
-
+        
         .webcam-name {{
             font-size: 0.85rem;
         }}
-
+        
         footer {{
             text-align: center;
             padding: 30px;
             font-size: 0.8rem;
             opacity: 0.4;
         }}
-
+        
         footer a {{
             color: var(--seafoam);
         }}
-
+        
         @media (max-width: 600px) {{
             .logo {{ font-size: 1.8rem; }}
             .top-picks {{ grid-template-columns: 1fr; }}
@@ -885,14 +836,14 @@ def generate_dashboard(forecast: dict) -> str:
             <div class="tagline">Perth Beach Forecast</div>
             <div class="updated">Updated {updated} AWST</div>
         </header>
-
+        
         <div class="summary-card">
             {forecast.get("summary", "")}
             <div class="water-temp">🌡️ Water temperature: {forecast.get("water_temp_c", "?")}°C</div>
         </div>
-
+        
         {error_html}
-
+        
         <div class="top-picks">
             <div class="pick-card snorkel">
                 <div class="pick-label">🤿 Best Snorkelling</div>
@@ -910,7 +861,7 @@ def generate_dashboard(forecast: dict) -> str:
                 <div class="pick-detail">{gem_detail}</div>
             </div>
         </div>
-
+        
         <div class="section-title">🤿 Snorkelling Conditions</div>
         <div class="legend">
             <span class="legend-item">⭐ Perfect (glassy, &lt;0.15m, &lt;8km/h) - shows best time</span>
@@ -932,7 +883,7 @@ def generate_dashboard(forecast: dict) -> str:
                 </tbody>
             </table>
         </div>
-
+        
         <div class="section-title">☀️ Sunbathing Conditions</div>
         <div class="legend">
             <span class="legend-item">⭐ Perfect (28-34°C, &lt;8km/h)</span>
@@ -954,19 +905,19 @@ def generate_dashboard(forecast: dict) -> str:
                 </tbody>
             </table>
         </div>
-
+        
         <div class="section-title">📹 Live Webcams</div>
         <div class="webcams">
             {"".join(f'<a href="{w["url"]}" target="_blank" class="webcam-link"><span class="webcam-icon">{w["icon"]}</span><span class="webcam-name">{w["name"]}</span></a>' for w in WEBCAMS)}
         </div>
-
+        
         <footer>
             Built with 🤿 by Snorkel Alert v4.1
         </footer>
     </div>
 </body>
 </html>"""
-
+    
     return html
 
 # =============================================================================
@@ -980,29 +931,29 @@ def main():
 ╚═══════════════════════════════════════════════════════════╝
 """)
     print(f"📅 {datetime.now().strftime('%A %-d %B %Y, %-I:%M%p')} AWST\n")
-
+    
     # 1. Fetch all data
     print("━━━ FETCHING DATA ━━━")
     print("  (with retry logic and rate limiting protection)\n")
     raw_data, errors = fetch_all_data()
-
+    
     if not raw_data:
         print("❌ No data fetched, aborting")
         return
-
+    
     print(f"\n  🌡️ Fetching water temperature...", end=" ", flush=True)
     water_temp = fetch_water_temp()
     print(f"{water_temp}°C ✅" if water_temp else "❌")
-
+    
     if errors:
         print(f"\n  ⚠️ Failed to fetch: {', '.join(errors)}")
-
+    
     print(f"\n  ✅ Successfully fetched {len(raw_data)}/{len(raw_data) + len(errors)} beaches")
-
+    
     # 2. Claude analysis
     print("\n━━━ ANALYSING WITH CLAUDE ━━━")
     print("  🤖 Generating forecast...", end=" ", flush=True)
-
+    
     try:
         forecast = generate_forecast(raw_data, water_temp, errors)
         print("✅")
@@ -1011,12 +962,12 @@ def main():
         import traceback
         traceback.print_exc()
         return
-
+    
     # 3. Display summary
     print(f"\n{'═'*55}")
     print(f"\n{forecast.get('summary', 'No summary')}\n")
     print(f"🌡️ Water: {forecast.get('water_temp_c', '?')}°C")
-
+    
     top = forecast.get("top_picks", {})
     if top.get("best_snorkel", {}).get("spot"):
         p = top["best_snorkel"]
@@ -1025,13 +976,13 @@ def main():
     if top.get("best_sunbathing", {}).get("spot"):
         p = top["best_sunbathing"]
         print(f"☀️ Best sunbathing: {p['spot']} ({p['day']})")
-
+    
     # 4. Send notifications
     print("\n━━━ NOTIFICATIONS ━━━")
     title, message = format_pushover(forecast)
     print(f"\n{title}\n{message}\n")
     send_pushover(title, message)
-
+    
     # 5. Generate dashboard
     print("\n━━━ DASHBOARD ━━━")
     try:
@@ -1042,7 +993,7 @@ def main():
         print("  📊 Dashboard saved to docs/index.html ✅")
     except Exception as e:
         print(f"  ❌ Dashboard failed: {e}")
-
+    
     print(f"\n{'═'*55}")
     print("✅ COMPLETE\n")
 
