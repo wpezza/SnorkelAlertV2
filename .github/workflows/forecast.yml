@@ -1,52 +1,20 @@
 name: 🌊 Snorkel Alert
 
 on:
-  # Scheduled forecast: Mon, Wed, Fri at 10am Perth (2am UTC)
+  # Scheduled forecast: Mon, Wed, Fri at 6am Perth (22:00 UTC previous day)
   schedule:
-    - cron: '0 2 * * 1,3,5'
-  
-  # Go Now checks: Every 2 hours from 5am-11am Perth (21:00-03:00 UTC)
-  # Only on good weather days (we'll check conditions first)
-    - cron: '0 21,23,1,3 * * *'
+    - cron: '0 22 * * 0,2,4'
   
   # Manual trigger
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'Run mode'
-        required: true
-        default: 'scheduled'
-        type: choice
-        options:
-          - scheduled
-          - go_now
 
-# Permissions for GitHub Pages
 permissions:
   contents: write
   pages: write
   id-token: write
 
 jobs:
-  # Determine which mode to run
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      mode: ${{ steps.set-mode.outputs.mode }}
-    steps:
-      - name: Determine mode
-        id: set-mode
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event.schedule }}" == "0 2 * * 1,3,5" ]; then
-            echo "mode=scheduled" >> $GITHUB_OUTPUT
-          else
-            echo "mode=go_now" >> $GITHUB_OUTPUT
-          fi
-
   forecast:
-    needs: setup
     runs-on: ubuntu-latest
     
     steps:
@@ -59,26 +27,18 @@ jobs:
           python-version: '3.11'
       
       - name: 📦 Install dependencies
-        run: |
-          pip install anthropic requests pillow
+        run: pip install anthropic requests
       
       - name: 🌊 Run Snorkel Alert
         env:
-          ALERT_MODE: ${{ needs.setup.outputs.mode }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PUSHOVER_USER_KEY: ${{ secrets.PUSHOVER_USER_KEY }}
           PUSHOVER_API_TOKEN: ${{ secrets.PUSHOVER_API_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
-          ENABLE_PUSHOVER: ${{ vars.ENABLE_PUSHOVER || 'true' }}
-          ENABLE_TELEGRAM: ${{ vars.ENABLE_TELEGRAM || 'false' }}
-          ENABLE_GO_NOW_ALERTS: ${{ vars.ENABLE_GO_NOW_ALERTS || 'true' }}
-          ENABLE_VISUAL_CARDS: ${{ vars.ENABLE_VISUAL_CARDS || 'true' }}
-          ENABLE_WEBCAMS: ${{ vars.ENABLE_WEBCAMS || 'true' }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python snorkel_alert.py
       
-      - name: 📤 Commit dashboard (scheduled only)
-        if: needs.setup.outputs.mode == 'scheduled'
+      - name: 📤 Commit dashboard
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -86,8 +46,7 @@ jobs:
           git diff --staged --quiet || git commit -m "🌊 Update forecast $(date +'%Y-%m-%d %H:%M')"
           git push || true
       
-      - name: 🚀 Deploy to GitHub Pages (scheduled only)
-        if: needs.setup.outputs.mode == 'scheduled'
+      - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
