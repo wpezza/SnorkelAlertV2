@@ -1,11 +1,365 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Snorkel Alert</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌊 Snorkel Alert - Perth Beach Forecast</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+    <style>
+        :root {
+            --ocean: #0a1628;
+            --ocean-mid: #1a3a5c;
+            --seafoam: #4ecdc4;
+            --sand: #f4e4c1;
+            --perfect: #ffd700;
+            --good: #22c55e;
+            --ok: #f59e0b;
+            --poor: #ef4444;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(180deg, var(--ocean) 0%, var(--ocean-mid) 100%);
+            min-height: 100vh;
+            color: white;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .tagline {
+            opacity: 0.6;
+            font-size: 0.95rem;
+        }
+        
+        .updated {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            opacity: 0.4;
+        }
+        
+        .summary-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .water-temp {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 12px;
+            background: rgba(78,205,196,0.2);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .error-banner {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+        
+        .top-picks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .pick-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        
+        .pick-card.snorkel { border-left: 3px solid var(--seafoam); }
+        .pick-card.sunbathing { border-left: 3px solid var(--perfect); }
+        .pick-card.gem { border-left: 3px solid var(--good); }
+        
+        .pick-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+        
+        .pick-spot {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .pick-detail {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 30px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 0 -20px;
+            padding: 0 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        th.weekend {
+            background: rgba(255,215,0,0.15);
+            color: var(--perfect);
+        }
+        
+        .beach-name {
+            text-align: left;
+            font-weight: 500;
+            white-space: nowrap;
+            padding-left: 12px;
+        }
+        
+        .rating-cell {
+            min-width: 70px;
+        }
+        
+        .rating-cell .icon {
+            display: block;
+            font-size: 1.1rem;
+        }
+        
+        .rating-cell .detail {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+        
+        .rating-cell.perfect { background: rgba(255,215,0,0.1); }
+        .rating-cell.good { background: rgba(34,197,94,0.1); }
+        .rating-cell.ok { background: rgba(245,158,11,0.08); }
+        .rating-cell.poor { background: rgba(239,68,68,0.08); }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 12px 0 25px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .webcams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .webcam-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s;
+        }
+        
+        .webcam-link:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .webcam-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .webcam-name {
+            font-size: 0.85rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.8rem;
+            opacity: 0.4;
+        }
+        
+        footer a {
+            color: var(--seafoam);
+        }
+        
+        @media (max-width: 600px) {
+            .logo { font-size: 1.8rem; }
+            .top-picks { grid-template-columns: 1fr; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 4px; }
+            .rating-cell { min-width: 50px; }
+        }
+    </style>
 </head>
 <body>
-  <h1>🌊 Snorkel Alert</h1>
-  <p>This file will be automatically overwritten by the GitHub Action.</p>
+    <div class="container">
+        <header>
+            <div class="logo">🌊 Snorkel Alert</div>
+            <div class="tagline">Perth Beach Forecast</div>
+            <div class="updated">Updated Thursday 29 January 2026, 12:32pm AWST</div>
+        </header>
+        
+        <div class="summary-card">
+            Strong winds dominate this week with speeds reaching 28-43 km/h, creating challenging conditions for both snorkelling and sunbathing. Thursday 29th offers the calmest start with 29 km/h winds, while Tuesday 3rd sees the worst conditions with 39-43 km/h winds across locations.
+            <div class="water-temp">🌡️ Water temperature: 23.5°C</div>
+        </div>
+        
+        
+        
+        <div class="top-picks">
+            <div class="pick-card snorkel">
+                <div class="pick-label">🤿 Best Snorkelling</div>
+                <div class="pick-spot">North Cottesloe</div>
+                <div class="pick-detail">Thu 29th 06:00-08:00 — Lowest swell at 0.86m, winds still high at 29km/h</div>
+            </div>
+            <div class="pick-card sunbathing">
+                <div class="pick-label">☀️ Best Sunbathing</div>
+                <div class="pick-spot">Leighton</div>
+                <div class="pick-detail">Thu 29th — Warmest at 28°C with lowest wind at 21km/h</div>
+            </div>
+            <div class="pick-card gem">
+                <div class="pick-label">💎 Hidden Gem</div>
+                <div class="pick-spot">Omeo Wreck</div>
+                <div class="pick-detail">Wed 4th 06:00-08:00 — Moderate winds at 21km/h, historic wreck site</div>
+            </div>
+        </div>
+        
+        <div class="section-title">🤿 Snorkelling Conditions</div>
+        <div class="legend">
+            <span class="legend-item">⭐ Perfect (glassy, &lt;0.15m, &lt;8km/h) - shows best time</span>
+            <span class="legend-item">🟢 Good - shows best time</span>
+            <span class="legend-item">🟡 OK - shows wave height</span>
+            <span class="legend-item">🔴 Poor</span>
+            <span class="legend-item">★ Weekend</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="">Thu 29th</th><th class="">Fri 30th</th><th class="weekend">★ Sat 31st</th><th class="weekend">★ Sun 1st</th><th class="">Mon 2nd</th><th class="">Tue 3rd</th><th class="">Wed 4th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="beach-name">Mettams Pool</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.3m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.26m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.38m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.48m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.46m</span></td></tr>
+<tr><td class="beach-name">Hamersley Pool</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.3m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.26m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.38m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.48m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.46m</span></td></tr>
+<tr><td class="beach-name">Watermans Bay</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">0.94m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.18m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.14m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">0.96m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.24m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.32m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.24m</span></td></tr>
+<tr><td class="beach-name">North Cottesloe</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">0.86m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.12m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">0.92m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.18m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.24m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.16m</span></td></tr>
+<tr><td class="beach-name">Boyinaboat Reef</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.3m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.58m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.56m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.34m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.68m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.82m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.78m</span></td></tr>
+<tr><td class="beach-name">Omeo Wreck</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.12m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.46m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.32m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.18m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.52m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.64m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.6m</span></td></tr>
+<tr><td class="beach-name">Point Peron</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.3m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.72m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.52m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.32m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.7m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.8m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.76m</span></td></tr>
+<tr><td class="beach-name">Burns Beach</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.36m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.62m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.58m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.42m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.72m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.96m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.94m</span></td></tr>
+<tr><td class="beach-name">Yanchep Lagoon</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.44m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.66m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.68m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.58m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">1.76m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">2.08m</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">2.08m</span></td></tr>
+
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section-title">☀️ Sunbathing Conditions</div>
+        <div class="legend">
+            <span class="legend-item">⭐ Perfect (28-34°C, &lt;8km/h)</span>
+            <span class="legend-item">🟢 Good</span>
+            <span class="legend-item">🟡 OK</span>
+            <span class="legend-item">🔴 Poor</span>
+            <span class="legend-item">Format: temp° wind(km/h)</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="">Thu 29th</th><th class="">Fri 30th</th><th class="weekend">★ Sat 31st</th><th class="weekend">★ Sun 1st</th><th class="">Mon 2nd</th><th class="">Tue 3rd</th><th class="">Wed 4th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="beach-name">Cottesloe</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">North Cottesloe</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Swanbourne</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">City Beach</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Floreat</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Scarborough</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Trigg</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Sorrento</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">24° 29k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">30° 32k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 39k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 31k</span></td></tr>
+<tr><td class="beach-name">Hillarys</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 31k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 33k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 33k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">31° 35k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 36k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">25° 41k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 34k</span></td></tr>
+<tr><td class="beach-name">Leighton</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 21k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">27° 22k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">32° 26k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">36° 25k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">31° 24k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 28k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 21k</span></td></tr>
+<tr><td class="beach-name">South Beach</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 21k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">27° 22k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">32° 26k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">36° 25k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">31° 24k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 28k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 21k</span></td></tr>
+<tr><td class="beach-name">Bathers Beach</td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">28° 21k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">27° 22k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">32° 26k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">36° 25k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">31° 24k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">26° 28k</span></td><td class="rating-cell poor"><span class="icon">🔴</span><span class="detail">29° 21k</span></td></tr>
+
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section-title">📹 Live Webcams</div>
+        <div class="webcams">
+            <a href="https://www.transport.wa.gov.au/imarine/swanbourne-beach-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">🏖️</span><span class="webcam-name">Swanbourne</span></a><a href="https://www.transport.wa.gov.au/imarine/trigg-point-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">🌊</span><span class="webcam-name">Trigg Point</span></a><a href="https://www.transport.wa.gov.au/imarine/fremantle-fishing-boat-harbour-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">⚓</span><span class="webcam-name">Fremantle</span></a><a href="https://www.surf-forecast.com/breaks/Cottesloe-Beach/webcams/latest" target="_blank" class="webcam-link"><span class="webcam-icon">🏄</span><span class="webcam-name">Cottesloe</span></a>
+        </div>
+        
+        <footer>
+            Built with 🤿 by Snorkel Alert v4.1
+        </footer>
+    </div>
 </body>
 </html>
