@@ -1,5 +1,5 @@
 {
-  "summary": "Strong winds dominate this week with speeds reaching 28-43 km/h, creating challenging conditions for both snorkelling and sunbathing. Thursday 29th offers the calmest start with 29 km/h winds, while Tuesday 3rd sees the worst conditions with 39-43 km/h winds across locations.",
+  "summary": "Strong winds and elevated wave heights dominate this 7-day period, with winds reaching 32-40km/h most days. Wave heights range from 0.8-2.1m across locations, well above ideal snorkelling thresholds. Early morning windows may offer brief respites before conditions deteriorate.",
   "water_temp_c": 23.5,
   "today": {
     "date": "2026-01-29",
@@ -7,7 +7,7 @@
     "temp_max": 24,
     "wind_speed": 29,
     "wind_direction": "SSE",
-    "description": "Partly cloudy, strong southeasterly winds"
+    "description": "Windy conditions with moderate temperatures"
   },
   "dates": [
     "2026-01-29",
@@ -428,444 +428,444 @@
   "sunbathing": {
     "Cottesloe": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "North Cottesloe": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Swanbourne": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "City Beach": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Floreat": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Scarborough": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Trigg": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Sorrento": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 24,
         "wind": 29
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 28,
         "wind": 31
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 30,
         "wind": 32
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 35
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 39
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 31
       }
     },
     "Hillarys": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 31
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 33
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 33
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 31,
         "wind": 35
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 36
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 25,
         "wind": 41
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 34
       }
     },
     "Leighton": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 28,
         "wind": 21
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 27,
         "wind": 22
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 32,
         "wind": 26
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 36,
         "wind": 25
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 31,
         "wind": 24
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 28
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 21
       }
     },
     "South Beach": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 28,
         "wind": 21
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 27,
         "wind": 22
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 32,
         "wind": 26
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 36,
         "wind": 25
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 31,
         "wind": 24
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 28
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 21
       }
     },
     "Bathers Beach": {
       "2026-01-29": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 28,
         "wind": 21
       },
       "2026-01-30": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 27,
         "wind": 22
       },
       "2026-01-31": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 32,
         "wind": 26
       },
       "2026-02-01": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 36,
         "wind": 25
       },
       "2026-02-02": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 31,
         "wind": 24
       },
       "2026-02-03": {
-        "rating": "Poor",
+        "rating": "OK",
         "temp": 26,
         "wind": 28
       },
       "2026-02-04": {
-        "rating": "Poor",
+        "rating": "Good",
         "temp": 29,
         "wind": 21
       }
@@ -873,21 +873,21 @@
   },
   "top_picks": {
     "best_snorkel": {
-      "day": "Thu 29th",
-      "spot": "North Cottesloe",
-      "time": "06:00-08:00",
-      "why": "Lowest swell at 0.86m, winds still high at 29km/h"
+      "day": null,
+      "spot": null,
+      "time": null,
+      "why": "No snorkelling windows meet criteria this week."
     },
     "best_sunbathing": {
-      "day": "Thu 29th",
+      "day": "Sun 1st",
       "spot": "Leighton",
-      "why": "Warmest at 28\u00b0C with lowest wind at 21km/h"
+      "why": "36\u00b0C, 25km/h wind"
     },
     "hidden_gem": {
-      "day": "Wed 4th",
-      "spot": "Omeo Wreck",
-      "time": "06:00-08:00",
-      "why": "Moderate winds at 21km/h, historic wreck site"
+      "day": null,
+      "spot": null,
+      "time": null,
+      "why": "No snorkelling windows meet criteria this week."
     }
   },
   "errors": []
