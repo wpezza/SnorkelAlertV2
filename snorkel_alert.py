@@ -238,6 +238,67 @@ def fetch_all_data() -> tuple[dict, list]:
 # CLAUDE ANALYSIS
 # =============================================================================
 
+def slim_raw_data(raw_data: dict) -> dict:
+    """
+    Reduce raw_data size before sending to Claude:
+    - Keep only 06:00–12:00 hourly data (morning window)
+    - Keep daily summaries intact
+    - Drop unused fields automatically
+    """
+    slim = {}
+
+    for beach, data in raw_data.items():
+        slim_beach = {
+            "lat": data.get("lat"),
+            "lon": data.get("lon"),
+            "notes": data.get("notes"),
+            "marine": {},
+            "weather": {}
+        }
+
+        # ---- Marine ----
+        marine = data.get("marine", {})
+        if "hourly" in marine and "time" in marine["hourly"]:
+            times = marine["hourly"]["time"]
+            keep_idx = [
+                i for i, t in enumerate(times)
+                if "T06:" <= t[-8:-3] <= "T12:"
+            ]
+
+            slim_hourly = {}
+            for key, values in marine["hourly"].items():
+                if isinstance(values, list):
+                    slim_hourly[key] = [values[i] for i in keep_idx]
+
+            slim_beach["marine"]["hourly"] = slim_hourly
+
+        # Keep daily unchanged (already small)
+        if "daily" in marine:
+            slim_beach["marine"]["daily"] = marine["daily"]
+
+        # ---- Weather ----
+        weather = data.get("weather", {})
+        if "hourly" in weather and "time" in weather["hourly"]:
+            times = weather["hourly"]["time"]
+            keep_idx = [
+                i for i, t in enumerate(times)
+                if "T06:" <= t[-8:-3] <= "T12:"
+            ]
+
+            slim_hourly = {}
+            for key, values in weather["hourly"].items():
+                if isinstance(values, list):
+                    slim_hourly[key] = [values[i] for i in keep_idx]
+
+            slim_beach["weather"]["hourly"] = slim_hourly
+
+        if "daily" in weather:
+            slim_beach["weather"]["daily"] = weather["daily"]
+
+        slim[beach] = slim_beach
+
+    return slim
+
 def get_ordinal(n: int) -> str:
     """Get ordinal suffix for a number (1st, 2nd, 3rd, etc)."""
     if 11 <= n <= 13:
@@ -248,6 +309,10 @@ def generate_forecast(raw_data: dict, water_temp: float, errors: list) -> dict:
     """Send raw data to Claude for analysis."""
     
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    # Reduce payload size before sending to Claude
+    raw_data = slim_raw_data(raw_data)
+
     
     # Get dates for next 7 days
     dates = [(datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
