@@ -1,11 +1,8 @@
 name: 🌊 Snorkel Alert
 
 on:
-  # Scheduled forecast: Mon, Wed, Fri at 6am Perth (22:00 UTC previous day)
   schedule:
     - cron: '0 22 * * 0,2,4'
-  
-  # Manual trigger
   workflow_dispatch:
 
 permissions:
@@ -16,19 +13,21 @@ permissions:
 jobs:
   forecast:
     runs-on: ubuntu-latest
-    
+    env:
+      TZ: Australia/Perth
+
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
-      
+
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: 📦 Install dependencies
-        run: pip install anthropic requests
-      
+        run: pip install anthropic requests urllib3
+
       - name: 🌊 Run Snorkel Alert
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -37,15 +36,15 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python snorkel_alert.py
-      
+
       - name: 📤 Commit dashboard
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs/ || true
-          git diff --staged --quiet || git commit -m "🌊 Update forecast $(date +'%Y-%m-%d %H:%M')"
+          git diff --staged --quiet || git commit -m "🌊 Update forecast $(TZ=Australia/Perth date +'%Y-%m-%d %H:%M')"
           git push || true
-      
+
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
