@@ -3,200 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌊 Snorkel Alert - Perth Beach Forecast</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+    <title>🌊 Snorkel Alert</title>
     <style>
-        :root { --ocean: #0a1628; --ocean-mid: #1a3a5c; --seafoam: #4ecdc4; --sun: #ffe66d; --coral: #ff6b6b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(180deg, var(--ocean), var(--ocean-mid)); min-height: 100vh; color: white; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; padding: 30px 20px; }
-        .logo { font-size: 2.5rem; margin-bottom: 5px; }
-        .tagline { opacity: 0.6; font-size: 0.9rem; }
-        .updated { margin-top: 10px; font-size: 0.8rem; opacity: 0.4; }
-        
-        .card { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin: 15px 0; }
-        .headline { font-size: 1.5rem; text-align: center; margin-bottom: 10px; }
-        .summary { text-align: center; opacity: 0.8; font-size: 0.95rem; }
-        .water-temp { text-align: center; color: var(--seafoam); margin-top: 10px; }
-        
-        .section { margin: 25px 0; }
-        .section h2 { font-size: 1.2rem; margin-bottom: 15px; opacity: 0.9; }
-        .hint { font-size: 0.85rem; opacity: 0.6; margin-bottom: 10px; }
-        
-        .days-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
-        .day-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 15px; }
-        .day-card.weekend { border: 1px solid var(--sun); }
-        .day-card.perfect { border: 1px solid #00c853; box-shadow: 0 0 15px rgba(0,200,83,0.2); }
-        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .day-name { font-weight: 600; }
-        .badge { padding: 2px 6px; border-radius: 6px; font-size: 0.65rem; font-weight: 600; }
-        .badge.weekend { background: var(--sun); color: var(--ocean); }
-        .badge.perfect { background: #00c853; }
-        .ratings { display: flex; gap: 8px; margin: 8px 0; }
-        .rating { flex: 1; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.85rem; }
-        .rating.snorkel { background: rgba(78,205,196,0.2); }
-        .rating.beach { background: rgba(255,230,109,0.2); }
-        .day-details { font-size: 0.8rem; opacity: 0.8; }
-        .tip { background: rgba(255,255,255,0.08); padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 0.75rem; }
-        
-        .picks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-        .pick-card { background: rgba(78,205,196,0.15); border-radius: 12px; padding: 15px; }
-        .pick-card.beach { background: rgba(255,230,109,0.15); }
-        .pick-card.gem { background: rgba(255,107,107,0.15); }
-        .pick-type { font-size: 0.75rem; opacity: 0.7; }
-        .pick-spot { font-size: 1.1rem; font-weight: 600; margin: 3px 0; }
-        .pick-when { color: var(--seafoam); font-size: 0.85rem; }
-        
-        .calendar-links { display: flex; flex-wrap: wrap; gap: 10px; }
-        .cal-btn { display: inline-block; background: rgba(78,205,196,0.2); border: 1px solid var(--seafoam); color: white; padding: 10px 16px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; }
-        .cal-btn:hover { background: var(--seafoam); color: var(--ocean); }
-        
-        .webcam-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
-        .webcam-card { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-decoration: none; color: white; transition: all 0.2s; }
-        .webcam-card:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
-        .webcam-icon { font-size: 2rem; margin-bottom: 8px; }
-        .webcam-name { font-weight: 600; margin-bottom: 4px; }
-        .webcam-desc { font-size: 0.75rem; opacity: 0.6; text-align: center; }
-        
-        footer { text-align: center; padding: 30px; opacity: 0.4; font-size: 0.8rem; }
-        footer a { color: var(--seafoam); }
-        
-        @media (max-width: 600px) {
-            .logo { font-size: 2rem; }
-            .headline { font-size: 1.2rem; }
-            .days-grid, .picks-grid, .webcam-grid { grid-template-columns: 1fr; }
-        }
+        body { font-family: system-ui, sans-serif; background: #0a1628; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .container { text-align: center; padding: 40px; }
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+        p { opacity: 0.6; }
+        a { color: #4ecdc4; }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">🌊 Snorkel Alert</div>
-            <div class="tagline">Perth's smartest beach forecast</div>
-            <div class="updated">Updated Wednesday 28 January 2026, 03:03 PM AWST</div>
-        </header>
-        
-        <div class="card">
-            <div class="headline">Monday magic then Tuesday's wild winds wreck everything</div>
-            <div class="summary">A week of extremes with mostly poor conditions due to strong winds and choppy seas. Monday stands out as the golden day with excellent conditions across all beaches, while Tuesday brings fierce winds making all activities unsafe.</div>
-            <div class="water-temp">🌡️ Water: Perfect - boardies and rashie combo</div>
-        </div>
-        
-        <div class="section"><h2>📅 Add Perfect Days to Calendar</h2><div class="calendar-links"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=🤿+Snorkelling+@+South+Beach&dates=20260129T060000/20260129T090000&ctz=Australia/Perth" target="_blank" class="cal-btn">📅 Thursday - South Beach</a></div></div>
-        
-        <div class="section">
-            <h2>🏆 Top Picks</h2>
-            <div class="picks-grid">
-<div class="pick-card"><div class="pick-type">🤿 Best Snorkelling</div><div class="pick-spot">South Beach</div><div class="pick-when">Monday • Anytime</div></div><div class="pick-card beach"><div class="pick-type">☀️ Best Beach</div><div class="pick-spot">Cottesloe Beach</div><div class="pick-when">Monday</div></div><div class="pick-card gem"><div class="pick-type">💎 Hidden Gem</div><div class="pick-spot">South Beach</div><div class="pick-when">Thursday</div></div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>📅 7-Day Forecast</h2>
-            <div class="days-grid">
-
-                <div class="day-card">
-                    <div class="day-header"><span class="day-name">Wednesday</span><div></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 OK</div>
-                        <div class="rating beach">☀️ Poor</div>
-                    </div>
-                    <div class="day-details">🤿 Leighton Beach<br>☀️ South Beach</div>
-                    <div class="tip">💡 Cool and windy start - sheltered spots only</div>
-                </div>
-
-                <div class="day-card perfect">
-                    <div class="day-header"><span class="day-name">Thursday</span><div><span class="badge perfect">PERFECT</span></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 Perfect</div>
-                        <div class="rating beach">☀️ OK</div>
-                    </div>
-                    <div class="day-details">🤿 South Beach<br>☀️ Leighton Beach</div>
-                    <div class="tip">💡 Snorkelers rejoice - crystal clear conditions at south beaches</div>
-                </div>
-
-                <div class="day-card">
-                    <div class="day-header"><span class="day-name">Friday</span><div></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 Good</div>
-                        <div class="rating beach">☀️ OK</div>
-                    </div>
-                    <div class="day-details">🤿 Watermans Bay<br>☀️ South Beach</div>
-                    <div class="tip">💡 Light winds make for decent conditions - best of the workweek</div>
-                </div>
-
-                <div class="day-card weekend">
-                    <div class="day-header"><span class="day-name">Saturday</span><div><span class="badge weekend">WEEKEND</span></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 Poor</div>
-                        <div class="rating beach">☀️ Poor</div>
-                    </div>
-                    <div class="day-details">🤿 Leighton Beach<br>☀️ South Beach</div>
-                    <div class="tip">💡 Weekend washout begins - strong winds spoil the party</div>
-                </div>
-
-                <div class="day-card weekend">
-                    <div class="day-header"><span class="day-name">Sunday</span><div><span class="badge weekend">WEEKEND</span></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 OK</div>
-                        <div class="rating beach">☀️ Poor</div>
-                    </div>
-                    <div class="day-details">🤿 South Beach<br>☀️ Leighton Beach</div>
-                    <div class="tip">💡 Blustery Sunday - only the brave should venture out</div>
-                </div>
-
-                <div class="day-card">
-                    <div class="day-header"><span class="day-name">Monday</span><div></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 Good</div>
-                        <div class="rating beach">☀️ Good</div>
-                    </div>
-                    <div class="day-details">🤿 South Beach<br>☀️ Cottesloe Beach</div>
-                    <div class="tip">💡 Absolute pearler! Best day of the week for everything</div>
-                </div>
-
-                <div class="day-card">
-                    <div class="day-header"><span class="day-name">Tuesday</span><div></div></div>
-                    <div class="ratings">
-                        <div class="rating snorkel">🤿 Poor</div>
-                        <div class="rating beach">☀️ Poor</div>
-                    </div>
-                    <div class="day-details">🤿 None recommended<br>☀️ Your couch</div>
-                    <div class="tip">💡 Dangerous conditions - 30+ knot winds, stay off the water</div>
-                </div>
-
-            </div>
-        </div>
-        
-        <div class="section"><h2>📹 Live Webcams</h2><p class="hint">Click to view live beach conditions</p><div class="webcam-grid">
-                <a href="https://www.transport.wa.gov.au/marine/charts-warnings-current-conditions/coast-cams/swanbourne" target="_blank" class="webcam-card">
-                    <span class="webcam-icon">🏖️</span>
-                    <span class="webcam-name">Swanbourne Beach</span>
-                    <span class="webcam-desc">Official WA Gov cam - updates every minute</span>
-                </a>
-                <a href="https://www.transport.wa.gov.au/marine/charts-warnings-current-conditions/coast-cams/trigg-point" target="_blank" class="webcam-card">
-                    <span class="webcam-icon">🌊</span>
-                    <span class="webcam-name">Trigg Point</span>
-                    <span class="webcam-desc">Official WA Gov cam - great for checking swell</span>
-                </a>
-                <a href="https://www.transport.wa.gov.au/marine/charts-warnings-current-conditions/coast-cams/fremantle-fishing-boat-harbour" target="_blank" class="webcam-card">
-                    <span class="webcam-icon">⚓</span>
-                    <span class="webcam-name">Fremantle Harbour</span>
-                    <span class="webcam-desc">Official WA Gov cam - harbour conditions</span>
-                </a>
-                <a href="https://www.surf-forecast.com/breaks/Cottesloe-Beach/webcams/latest" target="_blank" class="webcam-card">
-                    <span class="webcam-icon">🏄</span>
-                    <span class="webcam-name">Cottesloe (Surfcam)</span>
-                    <span class="webcam-desc">Surf-forecast.com - may have ads</span>
-                </a>
-                <a href="https://www.surf-forecast.com/breaks/Scarborough_2/webcams/latest" target="_blank" class="webcam-card">
-                    <span class="webcam-icon">🏄</span>
-                    <span class="webcam-name">Scarborough (Surfcam)</span>
-                    <span class="webcam-desc">Surf-forecast.com - may have ads</span>
-                </a></div></div>
-        
-        <footer>Built with 🤿 by Snorkel Alert V3 • <a href="https://github.com/wpezza/SnorkleAlert">GitHub</a></footer>
+        <h1>🌊</h1>
+        <h2>Snorkel Alert</h2>
+        <p>Run the workflow to generate your first forecast</p>
+        <p><a href="https://github.com/wpezza/SnorkleAlert/actions">Go to Actions →</a></p>
     </div>
 </body>
 </html>
