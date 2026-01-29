@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """
-🌊 SNORKEL ALERT V4 - Perth Beach Forecast
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌊 SNORKEL ALERT V4.1 - Perth Beach Forecast
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Simplified version - fetches raw API data, Claude does all analysis.
 Professional tone, table-based dashboard.
 
+v4.1 Changes:
+- Added retry logic with exponential backoff
+- Added delays between API requests to avoid rate limiting
+- Added session reuse for better connection handling
+- Added best time (24h format) for snorkelling
+
 Author: Claude & Will
-Version: 4.0.0
+Version: 4.1.0
 """
 
 import os
@@ -15,6 +21,10 @@ import json
 import requests
 from datetime import datetime, timedelta
 from pathlib import Path
+import time
+import random
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import anthropic
 
 # =============================================================================
@@ -26,6 +36,36 @@ PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY", "")
 PUSHOVER_API_TOKEN = os.getenv("PUSHOVER_API_TOKEN", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
+# =============================================================================
+# HTTP SESSION WITH RETRY LOGIC
+# =============================================================================
+
+def create_session() -> requests.Session:
+    """Create a requests session with retry logic."""
+    session = requests.Session()
+    
+    retry_strategy = Retry(
+        total=5,                      # 5 retries
+        backoff_factor=2,             # 2, 4, 8, 16, 32 seconds
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET"],
+        raise_on_status=False
+    )
+    
+    adapter = HTTPAdapter(
+        max_retries=retry_strategy,
+        pool_connections=10,
+        pool_maxsize=10
+    )
+    
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    
+    return session
+
+# Global session
+SESSION = create_session()
 
 # =============================================================================
 # BEACHES
@@ -87,44 +127,79 @@ WEBCAMS = [
 ]
 
 # =============================================================================
-# DATA FETCHING
+# DATA FETCHING WITH RATE LIMITING PROTECTION
 # =============================================================================
+
+def fetch_with_retry(url: str, params: dict, max_retries: int = 3) -> dict:
+    """Fetch data with retry logic and rate limiting protection."""
+    
+    for attempt in range(max_retries):
+        try:
+            # Add jitter delay to avoid rate limiting (0.5-1.5 seconds)
+            delay = 0.5 + random.random()
+            time.sleep(delay)
+            
+            resp = SESSION.get(url, params=params, timeout=45)
+            
+            # Check for rate limiting
+            if resp.status_code == 429:
+                wait_time = int(resp.headers.get("Retry-After", 30))
+                print(f"⏳ Rate limited, waiting {wait_time}s...", end=" ", flush=True)
+                time.sleep(wait_time)
+                continue
+            
+            resp.raise_for_status()
+            return resp.json()
+            
+        except requests.exceptions.Timeout:
+            if attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 5  # 5, 10, 15 seconds
+                print(f"⏳ Timeout, retry in {wait_time}s...", end=" ", flush=True)
+                time.sleep(wait_time)
+            else:
+                raise
+                
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 3
+                print(f"⏳ Error, retry in {wait_time}s...", end=" ", flush=True)
+                time.sleep(wait_time)
+            else:
+                raise
+    
+    raise Exception("Max retries exceeded")
 
 def fetch_marine_data(lat: float, lon: float) -> dict:
     """Fetch marine data from Open-Meteo."""
-    resp = requests.get("https://marine-api.open-meteo.com/v1/marine", params={
+    return fetch_with_retry("https://marine-api.open-meteo.com/v1/marine", {
         "latitude": lat, "longitude": lon,
         "hourly": ["wave_height", "wave_direction", "swell_wave_height"],
         "daily": ["wave_height_max"],
         "timezone": "Australia/Perth",
         "forecast_days": 7
-    }, timeout=30)
-    resp.raise_for_status()
-    return resp.json()
+    })
 
 def fetch_weather_data(lat: float, lon: float) -> dict:
     """Fetch weather data from Open-Meteo."""
-    resp = requests.get("https://api.open-meteo.com/v1/forecast", params={
+    return fetch_with_retry("https://api.open-meteo.com/v1/forecast", {
         "latitude": lat, "longitude": lon,
         "hourly": ["temperature_2m", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"],
         "daily": ["temperature_2m_max", "temperature_2m_min", "wind_speed_10m_max", 
                   "wind_direction_10m_dominant", "sunrise", "sunset", "uv_index_max"],
         "timezone": "Australia/Perth",
         "forecast_days": 7
-    }, timeout=30)
-    resp.raise_for_status()
-    return resp.json()
+    })
 
 def fetch_water_temp() -> float:
     """Fetch water temperature."""
     try:
-        resp = requests.get("https://marine-api.open-meteo.com/v1/marine", params={
+        data = fetch_with_retry("https://marine-api.open-meteo.com/v1/marine", {
             "latitude": -31.9939, "longitude": 115.7522,
             "hourly": ["sea_surface_temperature"],
             "timezone": "Australia/Perth",
             "forecast_days": 1
-        }, timeout=10)
-        temps = [t for t in resp.json().get("hourly", {}).get("sea_surface_temperature", []) if t]
+        })
+        temps = [t for t in data.get("hourly", {}).get("sea_surface_temperature", []) if t]
         return round(sum(temps) / len(temps), 1) if temps else None
     except:
         return None
@@ -137,8 +212,10 @@ def fetch_all_data() -> tuple[dict, list]:
     # Combine all spots (avoid duplicates by name)
     all_spots = {s["name"]: s for s in SNORKEL_SPOTS + SUNBATHING_SPOTS}
     
-    for name, spot in all_spots.items():
-        print(f"  📍 {name}...", end=" ", flush=True)
+    total = len(all_spots)
+    
+    for i, (name, spot) in enumerate(all_spots.items()):
+        print(f"  📍 {name} ({i+1}/{total})...", end=" ", flush=True)
         try:
             marine = fetch_marine_data(spot["lat"], spot["lon"])
             weather = fetch_weather_data(spot["lat"], spot["lon"])
@@ -150,8 +227,9 @@ def fetch_all_data() -> tuple[dict, list]:
                 "weather": weather
             }
             print("✅")
+            
         except Exception as e:
-            print(f"❌ {e}")
+            print(f"❌ {str(e)[:50]}")
             errors.append(name)
     
     return all_data, errors
@@ -159,6 +237,12 @@ def fetch_all_data() -> tuple[dict, list]:
 # =============================================================================
 # CLAUDE ANALYSIS
 # =============================================================================
+
+def get_ordinal(n: int) -> str:
+    """Get ordinal suffix for a number (1st, 2nd, 3rd, etc)."""
+    if 11 <= n <= 13:
+        return "th"
+    return {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
 
 def generate_forecast(raw_data: dict, water_temp: float, errors: list) -> dict:
     """Send raw data to Claude for analysis."""
@@ -197,6 +281,11 @@ SUNBATHING (consider temp AND wind):
 - 🟡 OK: temp 22-38°C AND wind <18 km/h
 - 🔴 Poor: temp <22°C or >38°C OR wind >18 km/h
 
+## BEST TIME CALCULATION
+For snorkelling, analyze the hourly data and find the best window (usually early morning before sea breeze). 
+Return as 24-hour format range, e.g., "06:00-09:00" or "07:00-10:00".
+The sea breeze (Fremantle Doctor) typically arrives between 11:00-14:00 in summer.
+
 ## SNORKEL SPOTS
 Mettams Pool, Hamersley Pool, Watermans Bay, North Cottesloe, Boyinaboat Reef, Omeo Wreck, Point Peron, Burns Beach, Yanchep Lagoon
 
@@ -208,6 +297,7 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
 - Be factual and professional - no flowery language
 - Include specific numbers (wave heights, wind speeds, temperatures)
 - Consider shelter notes for each beach
+- Include best_time in 24h format for snorkelling entries
 
 ## RESPONSE FORMAT (strict JSON)
 {{
@@ -225,8 +315,8 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
     "date_labels": ["{date_labels[0]}", "{date_labels[1]}", "{date_labels[2]}", "{date_labels[3]}", "{date_labels[4]}", "{date_labels[5]}", "{date_labels[6]}"],
     "snorkel": {{
         "Mettams Pool": {{
-            "{dates[0]}": {{"rating": "Perfect", "waves": 0.1, "wind": 6}},
-            "{dates[1]}": {{"rating": "Good", "waves": 0.2, "wind": 10}},
+            "{dates[0]}": {{"rating": "Perfect", "waves": 0.1, "wind": 6, "best_time": "06:00-09:00"}},
+            "{dates[1]}": {{"rating": "Good", "waves": 0.2, "wind": 10, "best_time": "06:00-10:00"}},
             ... (all 7 days)
         }},
         ... (all 9 snorkel spots)
@@ -240,9 +330,9 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
         ... (all 12 sunbathing spots)
     }},
     "top_picks": {{
-        "best_snorkel": {{"day": "{date_labels[0]}", "spot": "Mettams Pool", "why": "0.1m swell, 6km/h wind"}},
+        "best_snorkel": {{"day": "{date_labels[0]}", "spot": "Mettams Pool", "time": "06:00-09:00", "why": "0.1m swell, 6km/h wind"}},
         "best_sunbathing": {{"day": "{date_labels[1]}", "spot": "Cottesloe", "why": "33°C, 5km/h wind"}},
-        "hidden_gem": {{"day": "{date_labels[0]}", "spot": "Watermans Bay", "why": "Same conditions as Mettams, fewer people"}}
+        "hidden_gem": {{"day": "{date_labels[0]}", "spot": "Watermans Bay", "time": "06:00-09:00", "why": "Same conditions as Mettams, fewer people"}}
     }}
 }}"""
 
@@ -265,18 +355,12 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
     
     return forecast
 
-def get_ordinal(n: int) -> str:
-    """Get ordinal suffix for a number (1st, 2nd, 3rd, etc)."""
-    if 11 <= n <= 13:
-        return "th"
-    return {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
-
 # =============================================================================
 # NOTIFICATIONS
 # =============================================================================
 
 def format_pushover(forecast: dict) -> tuple[str, str]:
-    """Format Pushover notification."""
+    """Format Pushover notification with best times."""
     
     lines = []
     
@@ -293,32 +377,45 @@ def format_pushover(forecast: dict) -> tuple[str, str]:
         # Find best spots for this day
         perfect_spots = []
         good_spots = []
+        best_time = None
         
         for spot, days in snorkel_data.items():
             if date in days:
                 rating = days[date].get("rating", "")
+                spot_time = days[date].get("best_time", "")
+                
+                # Get best time from first perfect/good spot
+                if not best_time and spot_time and rating in ["Perfect", "Good"]:
+                    best_time = spot_time
+                
+                short_name = spot.replace(" Pool", "").replace(" Bay", "").replace(" Reef", "").replace(" Wreck", "").replace(" Lagoon", "")
+                
                 if rating == "Perfect":
-                    perfect_spots.append(spot.replace(" Pool", "").replace(" Bay", "").replace(" Reef", "").replace(" Wreck", ""))
+                    perfect_spots.append(short_name)
                 elif rating == "Good":
-                    good_spots.append(spot.replace(" Pool", "").replace(" Bay", "").replace(" Reef", "").replace(" Wreck", ""))
+                    good_spots.append(short_name)
+        
+        time_str = f" ({best_time})" if best_time else ""
         
         if perfect_spots:
             has_good_conditions = True
             spots_str = ", ".join(perfect_spots[:3])
             if len(perfect_spots) > 3:
                 spots_str += f" +{len(perfect_spots)-3}"
-            lines.append(f"⭐ {label}: Perfect - {spots_str}")
+            lines.append(f"⭐ {label}: Perfect{time_str}")
+            lines.append(f"   {spots_str}")
         elif good_spots:
             has_good_conditions = True
             spots_str = ", ".join(good_spots[:3])
             if len(good_spots) > 3:
                 spots_str += f" +{len(good_spots)-3}"
-            lines.append(f"🟢 {label}: Good - {spots_str}")
+            lines.append(f"🟢 {label}: Good{time_str}")
+            lines.append(f"   {spots_str}")
         else:
             # Check if any OK
             ok_spots = [s for s, d in snorkel_data.items() if date in d and d[date].get("rating") == "OK"]
             if ok_spots:
-                lines.append(f"🟡 {label}: OK - {ok_spots[0].replace(' Pool', '')} only")
+                lines.append(f"🟡 {label}: OK conditions")
             else:
                 lines.append(f"🔴 {label}: Poor conditions")
     
@@ -411,7 +508,12 @@ def generate_dashboard(forecast: dict) -> str:
         
         if show_type == "snorkel":
             waves = data.get("waves", "?")
-            detail = f"{waves}m"
+            best_time = data.get("best_time", "")
+            # Show time for Perfect/Good, waves for OK/Poor
+            if rating in ["Perfect", "Good"] and best_time:
+                detail = best_time
+            else:
+                detail = f"{waves}m"
         else:
             temp = data.get("temp", "?")
             wind = data.get("wind", "?")
@@ -459,10 +561,17 @@ def generate_dashboard(forecast: dict) -> str:
     if errors:
         error_html = f'<div class="error-banner">⚠️ Missing data for: {", ".join(errors)}</div>'
     
-    # Top picks
+    # Top picks with time
     best_snorkel = top_picks.get("best_snorkel", {})
     best_sunbathing = top_picks.get("best_sunbathing", {})
     hidden_gem = top_picks.get("hidden_gem", {})
+    
+    # Format snorkel pick with time
+    snorkel_time = best_snorkel.get("time", "")
+    snorkel_detail = f"{best_snorkel.get('day', '')} {snorkel_time} — {best_snorkel.get('why', '')}"
+    
+    gem_time = hidden_gem.get("time", "")
+    gem_detail = f"{hidden_gem.get('day', '')} {gem_time} — {hidden_gem.get('why', '')}"
     
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -633,7 +742,7 @@ def generate_dashboard(forecast: dict) -> str:
         }}
         
         .rating-cell {{
-            min-width: 60px;
+            min-width: 70px;
         }}
         
         .rating-cell .icon {{
@@ -716,7 +825,7 @@ def generate_dashboard(forecast: dict) -> str:
             .top-picks {{ grid-template-columns: 1fr; }}
             table {{ font-size: 0.75rem; }}
             th, td {{ padding: 8px 4px; }}
-            .rating-cell {{ min-width: 45px; }}
+            .rating-cell {{ min-width: 50px; }}
         }}
     </style>
 </head>
@@ -739,7 +848,7 @@ def generate_dashboard(forecast: dict) -> str:
             <div class="pick-card snorkel">
                 <div class="pick-label">🤿 Best Snorkelling</div>
                 <div class="pick-spot">{best_snorkel.get("spot", "N/A")}</div>
-                <div class="pick-detail">{best_snorkel.get("day", "")} — {best_snorkel.get("why", "")}</div>
+                <div class="pick-detail">{snorkel_detail}</div>
             </div>
             <div class="pick-card sunbathing">
                 <div class="pick-label">☀️ Best Sunbathing</div>
@@ -749,15 +858,15 @@ def generate_dashboard(forecast: dict) -> str:
             <div class="pick-card gem">
                 <div class="pick-label">💎 Hidden Gem</div>
                 <div class="pick-spot">{hidden_gem.get("spot", "N/A")}</div>
-                <div class="pick-detail">{hidden_gem.get("day", "")} — {hidden_gem.get("why", "")}</div>
+                <div class="pick-detail">{gem_detail}</div>
             </div>
         </div>
         
         <div class="section-title">🤿 Snorkelling Conditions</div>
         <div class="legend">
-            <span class="legend-item">⭐ Perfect (glassy, &lt;0.15m, &lt;8km/h)</span>
-            <span class="legend-item">🟢 Good</span>
-            <span class="legend-item">🟡 OK</span>
+            <span class="legend-item">⭐ Perfect (glassy, &lt;0.15m, &lt;8km/h) - shows best time</span>
+            <span class="legend-item">🟢 Good - shows best time</span>
+            <span class="legend-item">🟡 OK - shows wave height</span>
             <span class="legend-item">🔴 Poor</span>
             <span class="legend-item">★ Weekend</span>
         </div>
@@ -803,7 +912,7 @@ def generate_dashboard(forecast: dict) -> str:
         </div>
         
         <footer>
-            Built with 🤿 by Snorkel Alert v4
+            Built with 🤿 by Snorkel Alert v4.1
         </footer>
     </div>
 </body>
@@ -818,24 +927,28 @@ def generate_dashboard(forecast: dict) -> str:
 def main():
     print("""
 ╔═══════════════════════════════════════════════════════════╗
-║  🌊 SNORKEL ALERT V4 - Perth Beach Forecast               ║
+║  🌊 SNORKEL ALERT V4.1 - Perth Beach Forecast             ║
 ╚═══════════════════════════════════════════════════════════╝
 """)
     print(f"📅 {datetime.now().strftime('%A %-d %B %Y, %-I:%M%p')} AWST\n")
     
     # 1. Fetch all data
     print("━━━ FETCHING DATA ━━━")
+    print("  (with retry logic and rate limiting protection)\n")
     raw_data, errors = fetch_all_data()
     
     if not raw_data:
         print("❌ No data fetched, aborting")
         return
     
+    print(f"\n  🌡️ Fetching water temperature...", end=" ", flush=True)
     water_temp = fetch_water_temp()
-    print(f"\n  🌡️ Water temperature: {water_temp}°C")
+    print(f"{water_temp}°C ✅" if water_temp else "❌")
     
     if errors:
         print(f"\n  ⚠️ Failed to fetch: {', '.join(errors)}")
+    
+    print(f"\n  ✅ Successfully fetched {len(raw_data)}/{len(raw_data) + len(errors)} beaches")
     
     # 2. Claude analysis
     print("\n━━━ ANALYSING WITH CLAUDE ━━━")
@@ -858,7 +971,8 @@ def main():
     top = forecast.get("top_picks", {})
     if top.get("best_snorkel", {}).get("spot"):
         p = top["best_snorkel"]
-        print(f"🤿 Best snorkel: {p['spot']} ({p['day']})")
+        time_str = f" @ {p.get('time', '')}" if p.get('time') else ""
+        print(f"🤿 Best snorkel: {p['spot']} ({p['day']}{time_str})")
     if top.get("best_sunbathing", {}).get("spot"):
         p = top["best_sunbathing"]
         print(f"☀️ Best sunbathing: {p['spot']} ({p['day']})")
