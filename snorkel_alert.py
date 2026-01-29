@@ -335,10 +335,10 @@ Analyze this raw weather data and create a 7-day forecast.
 ## RATING CRITERIA
 
 SNORKELLING (must meet BOTH wave AND wind criteria):
-- ⭐ Perfect: waves <0.15m AND wind <8 km/h (glassy, mirror-flat conditions)
-- 🟢 Good: waves <0.3m AND wind <12 km/h
-- 🟡 OK: waves <0.5m AND wind <18 km/h
-- 🔴 Poor: waves >0.5m OR wind >18 km/h
+- ⭐ Perfect: waves <0.15m AND wind <10 km/h (glassy, mirror-flat conditions)
+- 🟢 Good: waves <0.35m AND wind <18 km/h
+- 🟡 OK: waves <0.6m AND wind <25 km/h
+- 🔴 Poor: waves >0.6m OR wind >25 km/h
 
 SUNBATHING (consider temp AND wind):
 - ⭐ Perfect: temp 28-34°C AND wind <8 km/h
@@ -394,6 +394,14 @@ Cottesloe, North Cottesloe, Swanbourne, City Beach, Floreat, Scarborough, Trigg,
         }},
         ... (all 12 sunbathing spots)
     }},
+
+## TOP_PICKS RULES
+- best_snorkel and hidden_gem must be chosen ONLY from entries rated "Perfect" or "Good".
+- Do NOT recommend snorkelling if all options are rated "OK" or "Poor".
+- If there are no "Perfect" or "Good" snorkel entries in the 7-day window, return:
+  "best_snorkel": {{"day": null, "spot": null, "time": null, "why": "No snorkelling windows meet criteria this week."}}
+  "hidden_gem": {{"day": null, "spot": null, "time": null, "why": "No snorkelling windows meet criteria this week."}}
+
     "top_picks": {{
         "best_snorkel": {{"day": "{date_labels[0]}", "spot": "Mettams Pool", "time": "06:00-09:00", "why": "0.1m swell, 6km/h wind"}},
         "best_sunbathing": {{"day": "{date_labels[1]}", "spot": "Cottesloe", "why": "33°C, 5km/h wind"}},
