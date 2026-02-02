@@ -1,4 +1,4 @@
-name: 🌊 Snorkel Alert v5
+name: 🌊 Snorkel Alert v6
 
 on:
   schedule:
@@ -26,6 +26,14 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           pip install requests anthropic
+
+      - name: 🧊 Restore cache
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: snorkel-alert-cache-${{ github.run_id }}
+          restore-keys: |
+            snorkel-alert-cache-
       
       - name: 🌊 Run Snorkel Alert
         env:
@@ -35,7 +43,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python snorkel_alert.py
+          python snorkel_alert.py --mode v6 --use-cache --cache-dir .cache
       
       - name: 📤 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
