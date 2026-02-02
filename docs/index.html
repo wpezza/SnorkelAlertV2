@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌊 Snorkel Alert v6 - Perth Beach Forecast</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+    <style>
+        :root {
+            --ocean: #0a1628;
+            --ocean-mid: #1a3a5c;
+            --seafoam: #4ecdc4;
+            --perfect: #ffd700;
+            --great: #22c55e;
+            --good: #22c55e;
+            --ok: #f59e0b;
+            --poor: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(180deg, var(--ocean) 0%, var(--ocean-mid) 100%);
+            min-height: 100vh;
+            color: white;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+        header { text-align: center; padding: 30px 20px; }
+        .logo { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; }
+        .tagline { opacity: 0.6; font-size: 0.95rem; }
+        .updated { margin-top: 8px; font-size: 0.8rem; opacity: 0.4; }
+
+        .summary-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .water-temp {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 12px;
+            background: rgba(78,205,196,0.2);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .error-banner {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.4);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+        }
+
+        .top-picks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .pick-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .pick-card.snorkel { border-left: 3px solid var(--seafoam); }
+        .pick-card.sunbathing { border-left: 3px solid var(--perfect); }
+        .pick-card.gem { border-left: 3px solid var(--great); }
+
+        .pick-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.6; margin-bottom: 4px; }
+        .pick-spot { font-size: 1.1rem; font-weight: 600; margin-bottom: 2px; }
+        .pick-score { font-size: 1.5rem; font-weight: 700; color: var(--seafoam); }
+        .pick-detail { font-size: 0.85rem; opacity: 0.7; }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 30px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-container { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        th.weekend {
+            background: rgba(255,215,0,0.15);
+            color: var(--perfect);
+        }
+
+        .beach-name {
+            text-align: left;
+            font-weight: 500;
+            white-space: nowrap;
+            padding-left: 12px;
+        }
+
+        .rating-cell { min-width: 70px; position: relative; }
+
+        .rating-cell .score {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .rating-cell .icon {
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+
+        .rating-cell .detail {
+            display: block;
+            font-size: 0.65rem;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+
+        .rating-cell.perfect { background: rgba(255,215,0,0.15); }
+        .rating-cell.perfect .score { color: var(--perfect); }
+
+        .rating-cell.great { background: rgba(34,197,94,0.12); }
+        .rating-cell.great .score { color: var(--great); }
+
+        .rating-cell.good { background: rgba(34,197,94,0.08); }
+        .rating-cell.good .score { color: var(--good); }
+
+        .rating-cell.ok { background: rgba(245,158,11,0.08); }
+        .rating-cell.ok .score { color: var(--ok); }
+
+        .rating-cell.poor { background: rgba(239,68,68,0.08); }
+        .rating-cell.poor .score { color: var(--poor); }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 12px 0 25px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+
+        .webcams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .webcam-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        .webcam-link:hover { background: rgba(255,255,255,0.1); }
+        .webcam-icon { font-size: 1.5rem; margin-bottom: 5px; }
+        .webcam-name { font-size: 0.85rem; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.8rem;
+            opacity: 0.4;
+        }
+
+        footer a { color: var(--seafoam); }
+
+        @media (max-width: 600px) {
+            .logo { font-size: 1.8rem; }
+            .top-picks { grid-template-columns: 1fr; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 4px; }
+            .rating-cell { min-width: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🌊 Snorkel Alert v6</div>
+            <div class="tagline">Perth Beach Forecast — Ratings from 0-10</div>
+            <div class="updated">Updated Monday 2 February 2026, 11:53pm AWST</div>
+        </header>
+
+        <div class="summary-card">
+            Best snorkelling at Mettams Pool (7.9/10). Best beach day at North Cottesloe (8.2/10). Water temperature 24.7°C.
+            <div class="water-temp">🌡️ Water temperature: 24.7°C</div>
+        </div>
+
+        
+
+        <div class="top-picks">
+            <div class="pick-card snorkel">
+                <div class="pick-label">🤿 Best Snorkelling</div>
+                <div class="pick-spot">Mettams Pool</div>
+                <div class="pick-score">7.9/10</div>
+                <div class="pick-detail">Mon 2nd 12:00-14:00 — 0.4m waves, 18km/h wind</div>
+            </div>
+            <div class="pick-card sunbathing">
+                <div class="pick-label">☀️ Best Sunbathing</div>
+                <div class="pick-spot">North Cottesloe</div>
+                <div class="pick-score">8.2/10</div>
+                <div class="pick-detail">Mon 2nd — 26°C, 18km/h wind</div>
+            </div>
+            <div class="pick-card gem">
+                <div class="pick-label">💎 Hidden Gem</div>
+                <div class="pick-spot">Hamersley Pool</div>
+                <div class="pick-detail">Mon 2nd 12:00-14:00 — Same conditions as Mettams, fewer people</div>
+            </div>
+        </div>
+
+        <div class="section-title">🤿 Snorkelling Conditions</div>
+        <div class="legend">
+            <span class="legend-item">9-10 🤿 Perfect</span>
+            <span class="legend-item">7.5-9 ⭐ Great</span>
+            <span class="legend-item">6-7.5 🟢 Good</span>
+            <span class="legend-item">4.5-6 🟡 OK</span>
+            <span class="legend-item">&lt;4.5 🔴 Poor</span>
+            <span class="legend-item">★ Weekend</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="">Mon 2nd</th><th class="">Tue 3rd</th><th class="">Wed 4th</th><th class="">Thu 5th</th><th class="">Fri 6th</th><th class="weekend">★ Sat 7th</th><th class="weekend">★ Sun 8th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="beach-name">Mettams Pool</td><td class="rating-cell great"><span class="score">7.9</span><span class="icon">⭐</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">2.5</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">5.2</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.0</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.3</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.5</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td></tr>
+<tr><td class="beach-name">Hamersley Pool</td><td class="rating-cell great"><span class="score">7.9</span><span class="icon">⭐</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">2.5</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">5.2</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.0</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.3</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.5</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td></tr>
+<tr><td class="beach-name">Watermans Bay</td><td class="rating-cell great"><span class="score">7.8</span><span class="icon">⭐</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">2.5</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">5.1</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td><td class="rating-cell good"><span class="score">6.2</span><span class="icon">🟢</span><span class="detail">10:00-13:00</span></td><td class="rating-cell good"><span class="score">6.2</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.1</span><span class="icon">🔴</span><span class="detail">08:00-11:00</span></td><td class="rating-cell good"><span class="score">6.4</span><span class="icon">🟢</span><span class="detail">09:00-12:00</span></td></tr>
+<tr><td class="beach-name">North Cottesloe</td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">1.8</span><span class="icon">🔴</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">4.1</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">4.3</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell ok"><span class="score">5.2</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.2</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">5.4</span><span class="icon">🟡</span><span class="detail">06:00-09:00</span></td></tr>
+<tr><td class="beach-name">Boyinaboat Reef</td><td class="rating-cell good"><span class="score">7.1</span><span class="icon">🟢</span><span class="detail">11:00-14:00</span></td><td class="rating-cell poor"><span class="score">1.8</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell poor"><span class="score">4.0</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">11:00-14:00</span></td><td class="rating-cell ok"><span class="score">5.1</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">2.9</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">08:00-11:00</span></td></tr>
+<tr><td class="beach-name">Omeo Wreck</td><td class="rating-cell ok"><span class="score">5.8</span><span class="icon">🟡</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">3.0</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">4.4</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell ok"><span class="score">5.3</span><span class="icon">🟡</span><span class="detail">10:00-13:00</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">10:00-13:00</span></td><td class="rating-cell poor"><span class="score">4.0</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">5.8</span><span class="icon">🟡</span><span class="detail">10:00-13:00</span></td></tr>
+<tr><td class="beach-name">Point Peron</td><td class="rating-cell good"><span class="score">6.2</span><span class="icon">🟢</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">2.1</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">10:00-13:00</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">08:00-11:00</span></td><td class="rating-cell poor"><span class="score">3.0</span><span class="icon">🔴</span><span class="detail">08:00-11:00</span></td><td class="rating-cell ok"><span class="score">5.1</span><span class="icon">🟡</span><span class="detail">09:00-12:00</span></td></tr>
+<tr><td class="beach-name">Burns Beach</td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">1.9</span><span class="icon">🔴</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">3.0</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell poor"><span class="score">3.2</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell poor"><span class="score">3.3</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">2.6</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">10:00-13:00</span></td></tr>
+<tr><td class="beach-name">Yanchep Lagoon</td><td class="rating-cell good"><span class="score">6.3</span><span class="icon">🟢</span><span class="detail">11:00-14:00</span></td><td class="rating-cell poor"><span class="score">1.8</span><span class="icon">🔴</span><span class="detail">12:00-14:00</span></td><td class="rating-cell poor"><span class="score">2.7</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">2.8</span><span class="icon">🔴</span><span class="detail">11:00-14:00</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">2.4</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td><td class="rating-cell poor"><span class="score">3.2</span><span class="icon">🔴</span><span class="detail">09:00-12:00</span></td></tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">☀️ Sunbathing Conditions</div>
+        <div class="legend">
+            <span class="legend-item">Format: 🌡️ max/min • 🌬️ wind(km/h)</span>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="">Mon 2nd</th><th class="">Tue 3rd</th><th class="">Wed 4th</th><th class="">Thu 5th</th><th class="">Fri 6th</th><th class="weekend">★ Sat 7th</th><th class="weekend">★ Sun 8th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="beach-name">Cottesloe</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 29°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/22°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">North Cottesloe</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 29°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/22°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Swanbourne</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 29°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/22°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">City Beach</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 28°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.6</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Floreat</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 28°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.6</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Scarborough</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 28°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.5</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/21°  🌬️ 40 km/h</span></td><td class="rating-cell ok"><span class="score">4.6</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.5</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Trigg</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 28°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.4</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/21°  🌬️ 40 km/h</span></td><td class="rating-cell poor"><span class="score">4.4</span><span class="icon">🔴</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.4</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.3</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Sorrento</td><td class="rating-cell great"><span class="score">8.2</span><span class="icon">⭐</span><span class="detail">🌡️ 28°/24°  🌬️ 24 km/h</span></td><td class="rating-cell poor"><span class="score">3.5</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/21°  🌬️ 40 km/h</span></td><td class="rating-cell poor"><span class="score">4.4</span><span class="icon">🔴</span><span class="detail">🌡️ 27°/19°  🌬️ 33 km/h</span></td><td class="rating-cell ok"><span class="score">4.9</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">5.4</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/21°  🌬️ 31 km/h</span></td><td class="rating-cell good"><span class="score">6.3</span><span class="icon">🟢</span><span class="detail">🌡️ 27°/22°  🌬️ 32 km/h</span></td></tr>
+<tr><td class="beach-name">Hillarys</td><td class="rating-cell great"><span class="score">7.9</span><span class="icon">⭐</span><span class="detail">🌡️ 31°/24°  🌬️ 23 km/h</span></td><td class="rating-cell poor"><span class="score">3.1</span><span class="icon">🔴</span><span class="detail">🌡️ 26°/22°  🌬️ 41 km/h</span></td><td class="rating-cell poor"><span class="score">4.3</span><span class="icon">🔴</span><span class="detail">🌡️ 27°/20°  🌬️ 34 km/h</span></td><td class="rating-cell ok"><span class="score">4.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/18°  🌬️ 39 km/h</span></td><td class="rating-cell ok"><span class="score">5.1</span><span class="icon">🟡</span><span class="detail">🌡️ 28°/22°  🌬️ 38 km/h</span></td><td class="rating-cell ok"><span class="score">5.1</span><span class="icon">🟡</span><span class="detail">🌡️ 29°/22°  🌬️ 35 km/h</span></td><td class="rating-cell ok"><span class="score">5.9</span><span class="icon">🟡</span><span class="detail">🌡️ 26°/22°  🌬️ 33 km/h</span></td></tr>
+<tr><td class="beach-name">Leighton</td><td class="rating-cell good"><span class="score">6.5</span><span class="icon">🟢</span><span class="detail">🌡️ 37°/25°  🌬️ 23 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/22°  🌬️ 31 km/h</span></td><td class="rating-cell ok"><span class="score">5.9</span><span class="icon">🟡</span><span class="detail">🌡️ 30°/19°  🌬️ 23 km/h</span></td><td class="rating-cell good"><span class="score">6.6</span><span class="icon">🟢</span><span class="detail">🌡️ 30°/18°  🌬️ 22 km/h</span></td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">🌡️ 31°/22°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">🌡️ 32°/22°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">7.3</span><span class="icon">🟢</span><span class="detail">🌡️ 30°/22°  🌬️ 24 km/h</span></td></tr>
+<tr><td class="beach-name">South Beach</td><td class="rating-cell good"><span class="score">6.4</span><span class="icon">🟢</span><span class="detail">🌡️ 37°/25°  🌬️ 23 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/22°  🌬️ 31 km/h</span></td><td class="rating-cell ok"><span class="score">5.9</span><span class="icon">🟡</span><span class="detail">🌡️ 29°/19°  🌬️ 23 km/h</span></td><td class="rating-cell good"><span class="score">6.4</span><span class="icon">🟢</span><span class="detail">🌡️ 29°/18°  🌬️ 22 km/h</span></td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">🌡️ 31°/21°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">🌡️ 32°/21°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">7.4</span><span class="icon">🟢</span><span class="detail">🌡️ 30°/22°  🌬️ 24 km/h</span></td></tr>
+<tr><td class="beach-name">Bathers Beach</td><td class="rating-cell good"><span class="score">6.4</span><span class="icon">🟢</span><span class="detail">🌡️ 37°/25°  🌬️ 23 km/h</span></td><td class="rating-cell ok"><span class="score">5.7</span><span class="icon">🟡</span><span class="detail">🌡️ 27°/22°  🌬️ 31 km/h</span></td><td class="rating-cell ok"><span class="score">5.9</span><span class="icon">🟡</span><span class="detail">🌡️ 29°/19°  🌬️ 23 km/h</span></td><td class="rating-cell good"><span class="score">6.4</span><span class="icon">🟢</span><span class="detail">🌡️ 29°/18°  🌬️ 22 km/h</span></td><td class="rating-cell good"><span class="score">6.8</span><span class="icon">🟢</span><span class="detail">🌡️ 31°/21°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">6.9</span><span class="icon">🟢</span><span class="detail">🌡️ 32°/21°  🌬️ 24 km/h</span></td><td class="rating-cell good"><span class="score">7.4</span><span class="icon">🟢</span><span class="detail">🌡️ 30°/22°  🌬️ 24 km/h</span></td></tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">📹 Live Webcams</div>
+        <div class="webcams">
+            <a href="https://www.transport.wa.gov.au/imarine/swanbourne-beach-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">🏖️</span><span class="webcam-name">Swanbourne</span></a><a href="https://www.transport.wa.gov.au/imarine/trigg-point-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">🌊</span><span class="webcam-name">Trigg Point</span></a><a href="https://www.transport.wa.gov.au/imarine/fremantle-fishing-boat-harbour-cam.asp" target="_blank" class="webcam-link"><span class="webcam-icon">⚓</span><span class="webcam-name">Fremantle</span></a><a href="https://www.surf-forecast.com/breaks/Cottesloe-Beach/webcams/latest" target="_blank" class="webcam-link"><span class="webcam-icon">🏄</span><span class="webcam-name">Cottesloe</span></a>
+        </div>
+
+        <footer>
+            Built with 🤿 by Snorkel Alert v6.0.0<br>
+            Ratings calibrated from real experience at Mettams Pool
+        </footer>
+    </div>
+</body>
+</html>
