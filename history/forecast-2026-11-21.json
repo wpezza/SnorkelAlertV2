@@ -1,0 +1,1309 @@
+{
+  "water_temp_c": 21.2,
+  "dates": [
+    "2026-11-21",
+    "2026-11-22",
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25",
+    "2026-11-26",
+    "2026-11-27"
+  ],
+  "date_labels": [
+    "Sat 21st",
+    "Sun 22nd",
+    "Mon 23rd",
+    "Tue 24th",
+    "Wed 25th",
+    "Thu 26th",
+    "Fri 27th"
+  ],
+  "today": {
+    "date": "2026-11-21",
+    "date_label": "Sat 21st",
+    "temp_max": 19.3,
+    "wind_speed": 30.5,
+    "wind_direction": "W",
+    "description": "Sunny"
+  },
+  "snorkel": {
+    "Mettams Pool": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.5,
+        "waves": 1.79,
+        "wind": 27.0,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.6,
+        "waves": 2.14,
+        "wind": 26.7,
+        "best_time": "12:00-14:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.9,
+        "waves": 1.13,
+        "wind": 6.7,
+        "best_time": "10:00-13:00"
+      },
+      "2026-11-24": {
+        "rating": "OK",
+        "score": 4.5,
+        "waves": 0.96,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Good",
+        "score": 6.2,
+        "waves": 0.57,
+        "wind": 13.1,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Good",
+        "score": 6.2,
+        "waves": 0.67,
+        "wind": 4.4,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.0,
+        "waves": 1.03,
+        "wind": 12.5,
+        "best_time": "07:00-10:00"
+      }
+    },
+    "Hamersley Pool": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.5,
+        "waves": 1.79,
+        "wind": 27.0,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.6,
+        "waves": 2.14,
+        "wind": 26.7,
+        "best_time": "12:00-14:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.9,
+        "waves": 1.13,
+        "wind": 6.7,
+        "best_time": "10:00-13:00"
+      },
+      "2026-11-24": {
+        "rating": "OK",
+        "score": 4.5,
+        "waves": 0.96,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Good",
+        "score": 6.2,
+        "waves": 0.57,
+        "wind": 13.1,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Good",
+        "score": 6.2,
+        "waves": 0.67,
+        "wind": 4.4,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.0,
+        "waves": 1.03,
+        "wind": 12.5,
+        "best_time": "07:00-10:00"
+      }
+    },
+    "Watermans Bay": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.4,
+        "waves": 1.82,
+        "wind": 27.0,
+        "best_time": "12:00-14:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.9,
+        "waves": 1.94,
+        "wind": 26.7,
+        "best_time": "12:00-14:00"
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 4.8,
+        "waves": 0.92,
+        "wind": 6.7,
+        "best_time": "09:00-12:00"
+      },
+      "2026-11-24": {
+        "rating": "OK",
+        "score": 5.0,
+        "waves": 0.82,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.5,
+        "waves": 0.58,
+        "wind": 13.1,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Good",
+        "score": 6.1,
+        "waves": 0.69,
+        "wind": 4.4,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 3.9,
+        "waves": 1.03,
+        "wind": 12.5,
+        "best_time": "07:00-10:00"
+      }
+    },
+    "North Cottesloe": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.1,
+        "waves": 1.88,
+        "wind": 21.9,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.1,
+        "waves": 2.22,
+        "wind": 23.0,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.3,
+        "waves": 1.08,
+        "wind": 6.4,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 3.7,
+        "waves": 1.02,
+        "wind": 5.1,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Poor",
+        "score": 4.1,
+        "waves": 0.97,
+        "wind": 9.6,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Poor",
+        "score": 4.3,
+        "waves": 1.07,
+        "wind": 1.7,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 3.2,
+        "waves": 1.46,
+        "wind": 10.6,
+        "best_time": "06:00-09:00"
+      }
+    },
+    "Boyinaboat Reef": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.2,
+        "waves": 2.24,
+        "wind": 27.0,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.5,
+        "waves": 2.69,
+        "wind": 26.7,
+        "best_time": "12:00-14:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.7,
+        "waves": 1.37,
+        "wind": 6.7,
+        "best_time": "09:00-12:00"
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 3.3,
+        "waves": 1.18,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Poor",
+        "score": 4.2,
+        "waves": 0.83,
+        "wind": 13.1,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 4.6,
+        "waves": 0.96,
+        "wind": 4.4,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-27": {
+        "rating": "Bad",
+        "score": 2.7,
+        "waves": 1.51,
+        "wind": 12.5,
+        "best_time": "07:00-10:00"
+      }
+    },
+    "Omeo Wreck": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.4,
+        "waves": 2.07,
+        "wind": 28.9,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.7,
+        "waves": 2.46,
+        "wind": 27.6,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 4.0,
+        "waves": 1.35,
+        "wind": 6.9,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 3.5,
+        "waves": 1.19,
+        "wind": 6.8,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Poor",
+        "score": 4.0,
+        "waves": 1.03,
+        "wind": 13.3,
+        "best_time": "09:00-12:00"
+      },
+      "2026-11-26": {
+        "rating": "Poor",
+        "score": 3.9,
+        "waves": 1.15,
+        "wind": 3.5,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-27": {
+        "rating": "Bad",
+        "score": 2.0,
+        "waves": 1.68,
+        "wind": 15.1,
+        "best_time": "08:00-11:00"
+      }
+    },
+    "Point Peron": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.1,
+        "waves": 2.61,
+        "wind": 29.2,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.1,
+        "waves": 3.05,
+        "wind": 30.5,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.6,
+        "waves": 1.5,
+        "wind": 9.1,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 3.0,
+        "waves": 1.31,
+        "wind": 6.9,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Poor",
+        "score": 3.5,
+        "waves": 1.05,
+        "wind": 14.2,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Poor",
+        "score": 3.7,
+        "waves": 1.17,
+        "wind": 4.2,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-27": {
+        "rating": "Bad",
+        "score": 1.7,
+        "waves": 1.84,
+        "wind": 16.6,
+        "best_time": "06:00-09:00"
+      }
+    },
+    "Burns Beach": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.4,
+        "waves": 2.51,
+        "wind": 27.0,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.1,
+        "waves": 3.21,
+        "wind": 26.7,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.3,
+        "waves": 1.81,
+        "wind": 6.7,
+        "best_time": "09:00-12:00"
+      },
+      "2026-11-24": {
+        "rating": "Bad",
+        "score": 2.9,
+        "waves": 1.48,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Bad",
+        "score": 2.9,
+        "waves": 1.41,
+        "wind": 13.1,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-26": {
+        "rating": "Poor",
+        "score": 3.5,
+        "waves": 1.59,
+        "wind": 4.4,
+        "best_time": "08:00-11:00"
+      },
+      "2026-11-27": {
+        "rating": "Bad",
+        "score": 2.2,
+        "waves": 2.35,
+        "wind": 12.5,
+        "best_time": "06:00-09:00"
+      }
+    },
+    "Yanchep Lagoon": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 1.4,
+        "waves": 2.1,
+        "wind": 24.5,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-22": {
+        "rating": "Bad",
+        "score": 1.9,
+        "waves": 1.98,
+        "wind": 26.0,
+        "best_time": "11:00-14:00"
+      },
+      "2026-11-23": {
+        "rating": "Poor",
+        "score": 3.2,
+        "waves": 1.06,
+        "wind": 6.7,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 3.1,
+        "waves": 0.99,
+        "wind": 5.6,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-25": {
+        "rating": "Bad",
+        "score": 2.5,
+        "waves": 1.1,
+        "wind": 16.7,
+        "best_time": "07:00-10:00"
+      },
+      "2026-11-26": {
+        "rating": "Poor",
+        "score": 3.7,
+        "waves": 1.25,
+        "wind": 6.0,
+        "best_time": "06:00-09:00"
+      },
+      "2026-11-27": {
+        "rating": "Bad",
+        "score": 2.0,
+        "waves": 1.73,
+        "wind": 16.8,
+        "best_time": "06:00-09:00"
+      }
+    }
+  },
+  "sunbathing": {
+    "North Cottesloe": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.0,
+        "temp": 18,
+        "wind": 22,
+        "temp_max": 20,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.7,
+        "temp": 17,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 26
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "OK",
+        "score": 4.5,
+        "temp": 14,
+        "wind": 5,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 18
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 13,
+        "wind": 10,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 22
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 23
+      },
+      "2026-11-27": {
+        "rating": "OK",
+        "score": 4.9,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 24
+      }
+    },
+    "Cottesloe": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.0,
+        "temp": 18,
+        "wind": 22,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.7,
+        "temp": 17,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 15,
+        "wind_max": 26
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "OK",
+        "score": 4.5,
+        "temp": 14,
+        "wind": 5,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 18
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 13,
+        "wind": 10,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 22
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 23
+      },
+      "2026-11-27": {
+        "rating": "OK",
+        "score": 4.9,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 24
+      }
+    },
+    "Swanbourne": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.1,
+        "temp": 18,
+        "wind": 22,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.7,
+        "temp": 17,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 26
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 14,
+        "wind": 5,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 18
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 13,
+        "wind": 10,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 22
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 23
+      },
+      "2026-11-27": {
+        "rating": "OK",
+        "score": 4.9,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 24
+      }
+    },
+    "City Beach": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.1,
+        "temp": 18,
+        "wind": 22,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.7,
+        "temp": 17,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 26
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 14,
+        "wind": 5,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 18
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 13,
+        "wind": 10,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 22
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.8,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 23
+      },
+      "2026-11-27": {
+        "rating": "OK",
+        "score": 4.9,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 24
+      }
+    },
+    "Floreat": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.0,
+        "temp": 18,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.5,
+        "temp": 17,
+        "wind": 24,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 27
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 19
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 13,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 23
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 26
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 27
+      }
+    },
+    "Scarborough": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.0,
+        "temp": 18,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.5,
+        "temp": 17,
+        "wind": 24,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 27
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 19
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 13,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 23
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 26
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 27
+      }
+    },
+    "Trigg": {
+      "2026-11-21": {
+        "rating": "Poor",
+        "score": 3.0,
+        "temp": 18,
+        "wind": 23,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 29
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.5,
+        "temp": 17,
+        "wind": 24,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 27
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 16
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 14,
+        "wind": 6,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 19
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 13,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 12,
+        "wind_max": 23
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.6,
+        "temp": 15,
+        "wind": 2,
+        "temp_max": 24,
+        "temp_min": 13,
+        "wind_max": 26
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.4,
+        "temp": 16,
+        "wind": 11,
+        "temp_max": 21,
+        "temp_min": 14,
+        "wind_max": 27
+      }
+    },
+    "Sorrento": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 2.6,
+        "temp": 18,
+        "wind": 27,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 30
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.3,
+        "temp": 17,
+        "wind": 27,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 30
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.3,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 17
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.2,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 21
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 13,
+        "wind": 13,
+        "temp_max": 20,
+        "temp_min": 12,
+        "wind_max": 25
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 16,
+        "wind": 4,
+        "temp_max": 23,
+        "temp_min": 14,
+        "wind_max": 29
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.3,
+        "temp": 16,
+        "wind": 12,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 30
+      }
+    },
+    "Hillarys": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 2.6,
+        "temp": 18,
+        "wind": 27,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 30
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.3,
+        "temp": 17,
+        "wind": 27,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 30
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.3,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 17
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.2,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 21
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 13,
+        "wind": 13,
+        "temp_max": 20,
+        "temp_min": 12,
+        "wind_max": 25
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 16,
+        "wind": 4,
+        "temp_max": 23,
+        "temp_min": 14,
+        "wind_max": 29
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.3,
+        "temp": 16,
+        "wind": 12,
+        "temp_max": 20,
+        "temp_min": 14,
+        "wind_max": 30
+      }
+    },
+    "Leighton": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 2.1,
+        "temp": 18,
+        "wind": 29,
+        "temp_max": 19,
+        "temp_min": 17,
+        "wind_max": 32
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.3,
+        "temp": 17,
+        "wind": 28,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 32
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 19,
+        "temp_min": 14,
+        "wind_max": 17
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.3,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 20
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 12,
+        "wind": 13,
+        "temp_max": 20,
+        "temp_min": 12,
+        "wind_max": 26
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 16,
+        "wind": 4,
+        "temp_max": 22,
+        "temp_min": 13,
+        "wind_max": 28
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.0,
+        "temp": 16,
+        "wind": 15,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 31
+      }
+    },
+    "South Beach": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 2.1,
+        "temp": 18,
+        "wind": 29,
+        "temp_max": 19,
+        "temp_min": 17,
+        "wind_max": 32
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.3,
+        "temp": 17,
+        "wind": 28,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 32
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 19,
+        "temp_min": 14,
+        "wind_max": 17
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.3,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 20
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 12,
+        "wind": 13,
+        "temp_max": 20,
+        "temp_min": 12,
+        "wind_max": 26
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 16,
+        "wind": 4,
+        "temp_max": 22,
+        "temp_min": 13,
+        "wind_max": 28
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.0,
+        "temp": 16,
+        "wind": 15,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 31
+      }
+    },
+    "Bathers Beach": {
+      "2026-11-21": {
+        "rating": "Bad",
+        "score": 2.1,
+        "temp": 18,
+        "wind": 29,
+        "temp_max": 19,
+        "temp_min": 17,
+        "wind_max": 32
+      },
+      "2026-11-22": {
+        "rating": "Poor",
+        "score": 3.3,
+        "temp": 17,
+        "wind": 28,
+        "temp_max": 19,
+        "temp_min": 16,
+        "wind_max": 32
+      },
+      "2026-11-23": {
+        "rating": "OK",
+        "score": 5.4,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 19,
+        "temp_min": 14,
+        "wind_max": 17
+      },
+      "2026-11-24": {
+        "rating": "Poor",
+        "score": 4.3,
+        "temp": 14,
+        "wind": 7,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 20
+      },
+      "2026-11-25": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 12,
+        "wind": 13,
+        "temp_max": 20,
+        "temp_min": 12,
+        "wind_max": 26
+      },
+      "2026-11-26": {
+        "rating": "OK",
+        "score": 5.2,
+        "temp": 16,
+        "wind": 4,
+        "temp_max": 22,
+        "temp_min": 13,
+        "wind_max": 28
+      },
+      "2026-11-27": {
+        "rating": "Poor",
+        "score": 4.0,
+        "temp": 16,
+        "wind": 15,
+        "temp_max": 20,
+        "temp_min": 13,
+        "wind_max": 31
+      }
+    }
+  },
+  "top_picks": {
+    "best_snorkel": {
+      "score": 6.2,
+      "spot": "Mettams Pool",
+      "day": "Wed 25th",
+      "time": "08:00-11:00",
+      "why": "0.6m waves, 13km/h wind",
+      "wave_avg": 0.57,
+      "wind": 13.1,
+      "note": "",
+      "viable": true
+    },
+    "best_sunbathing": {
+      "score": 5.8,
+      "spot": "North Cottesloe",
+      "day": "Wed 25th",
+      "why": "13\u00b0C, 10km/h wind",
+      "temp": 12.8,
+      "wind": 9.6,
+      "note": "",
+      "viable": true
+    },
+    "hidden_gem": {
+      "spot": "Hamersley Pool",
+      "day": "Wed 25th",
+      "time": "08:00-11:00",
+      "why": "Same conditions as Mettams, fewer people"
+    }
+  },
+  "errors": [],
+  "meta": {
+    "version": "6.0.0",
+    "mode": "v6",
+    "generated_at": "2026-11-21T01:54:14.043446",
+    "cache_hits": []
+  },
+  "summary": "Best snorkelling at Mettams Pool (6.2/10). Best beach day at North Cottesloe (5.8/10). Water temperature 21.2\u00b0C."
+}
